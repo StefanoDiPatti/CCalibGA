@@ -47,11 +47,21 @@ class GAEngine:
         img_pts = [self.matched_points[i] for i in indices]
 
         flags = chromosome.get_flags()
+        if flags & cv2.CALIB_USE_INTRINSIC_GUESS:
+            f_guess = max(self.img_width, self.img_height)
+            K_init = np.array([[f_guess, 0, self.img_width / 2.0],
+                            [0, f_guess, self.img_height / 2.0],
+                            [0, 0, 1.0]], dtype=np.float64)
+            dist_init = np.zeros((5, 1), dtype=np.float64)
+        else:
+            K_init = None
+            dist_init = None
+
         try:
             rms, K, dist, rvecs, tvecs = cv2.calibrateCamera(
                 obj_pts, img_pts,
                 (self.img_width, self.img_height),
-                None, None,
+                K_init, dist_init,
                 flags=flags
             )
         except cv2.error:
@@ -63,7 +73,9 @@ class GAEngine:
             proj, _ = cv2.projectPoints(
                 np.array(obj_pts[i]), rvecs[i], tvecs[i], K, dist
             )
-            err = cv2.norm(np.array(img_pts[i]), proj.reshape(-1, 2), cv2.NORM_L2)
+            a = np.array(img_pts[i], dtype=np.float32).reshape(-1, 1, 2)
+            b = proj.reshape(-1, 1, 2).astype(np.float32)
+            err = cv2.norm(a, b, cv2.NORM_L2)
             total_err += err ** 2
             total_pts += len(obj_pts[i])
 
@@ -197,11 +209,22 @@ class GAEngine:
         indices = chromosome.active_indices()
         obj_pts = [self.obj_points[i] for i in indices]
         img_pts = [self.matched_points[i] for i in indices]
+        flags = chromosome.get_flags()
+        if flags & cv2.CALIB_USE_INTRINSIC_GUESS:
+            f_guess = max(self.img_width, self.img_height)
+            K_init = np.array([[f_guess, 0, self.img_width / 2.0],
+                            [0, f_guess, self.img_height / 2.0],
+                            [0, 0, 1.0]], dtype=np.float64)
+            dist_init = np.zeros((5, 1), dtype=np.float64)
+        else:
+            K_init = None
+            dist_init = None
+
         _, K, dist, _, _ = cv2.calibrateCamera(
             obj_pts, img_pts,
             (self.img_width, self.img_height),
-            None, None,
-            flags=chromosome.get_flags()
+            K_init, dist_init,
+            flags=flags
         )
         return K, dist
 
