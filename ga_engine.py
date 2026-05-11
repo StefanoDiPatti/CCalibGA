@@ -82,16 +82,16 @@ class GAEngine:
         reproj = math.sqrt(total_err / total_pts) if total_pts > 0 else GAConstants.INF
 
         # Save intermediate result as XML
-        key = GAChromosome.to_string(chromosome)
-        fs_path = os.path.join(self.out_dir, key[:32] + '.xml')  # <-- xml
-        fs = cv2.FileStorage(fs_path, cv2.FILE_STORAGE_WRITE)
-        fs.write('cameraMatrix', K)
-        fs.write('distCoeffs', dist)
-        fs.write('ERR_REPROJ', reproj)
-        fs.write('ERR_RMS', rms)
-        fs.write('N_IMAGES', len(indices))
-        fs.write('ACTIVE_INDICES', np.array(indices, dtype=int))
-        fs.release()
+        #key = GAChromosome.to_string(chromosome)
+        #fs_path = os.path.join(self.out_dir, key[:32] + '.xml')  # <-- xml
+        #fs = cv2.FileStorage(fs_path, cv2.FILE_STORAGE_WRITE)
+        #fs.write('cameraMatrix', K)
+        #fs.write('distCoeffs', dist)
+        #fs.write('ERR_REPROJ', reproj)
+        #fs.write('ERR_RMS', rms)
+        #fs.write('N_IMAGES', len(indices))
+        #fs.write('ACTIVE_INDICES', np.array(indices, dtype=int))
+        #fs.release()
 
         return reproj
 
