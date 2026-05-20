@@ -1,0 +1,91 @@
+\section{Modello della Camera Proiettiva}
+\label{sec:modello_camera}
+
+\subsection{Modello pinhole e decomposizione di \texorpdfstring{\(\mat{P}\)}{P}}
+
+Una \emph{camera finita} è modellata dalla relazione proiettiva
+\[
+  \lambda\,\homo{x} = \mat{P}\,\homo{X},
+  \qquad \mat{P}\in\mathbb{R}^{3\times4},\quad\lambda\neq0,
+  \label{eq:modello_camera}
+\]
+dove \(\homo{X}\in\mathbb{P}^3\) è un punto della scena e
+\(\homo{x}\in\mathbb{P}^2\) è la sua proiezione sul piano
+immagine~\cite[Cap.~6]{HZ2004}.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[>=Stealth, scale=1.1]
+  \node[circle, fill=black!80, inner sep=2.5pt,
+        label=left:{\small\(\mat{C}\)}] (C) at (0,0) {};
+
+  \draw[thick, orange!70!black] (2.5,-1.5) -- (2.5,1.5);
+  \node[right, orange!70!black] at (2.55,1.5)
+        {\small piano immagine};
+
+  \draw[->, gray, dashed] (C) -- (4.5,0)
+        node[right]{\small asse \(Z\)};
+
+  \node[circle, fill=blue!60, inner sep=2pt] (X) at (4.0,1.1) {};
+  \node[above, blue!70!black] at (4.0,1.1) {\small\(\homo{X}\)};
+
+  \draw[-, blue!40] (C) -- (X);
+  \draw[dashed, blue!40] (X) -- (2.5,0.69);
+
+  \node[circle, fill=red!70, inner sep=2pt] at (2.5,0.69) {};
+  \node[right, red!70!black] at (2.5,0.69) {\small\(\homo{x}\)};
+
+  \draw[<->, gray] (0,-1.7) -- (2.5,-1.7)
+        node[midway, below] {\small\(f\)};
+\end{tikzpicture}
+\caption{Modello pinhole: \(\homo{X}\) proiettato su \(\homo{x}\)
+         attraverso il centro ottico \(\mat{C}\) a distanza
+         focale \(f\)~\cite[Fig.~6.1]{HZ2004}.}
+\label{fig:pinhole}
+\end{figure}
+
+La decomposizione canonica di \(\mat{P}\) è:
+\[
+  \mat{P} = \mat{K}\bigl[\mat{R}\mid-\mat{R}\mat{C}\bigr],
+  \label{eq:decomp_P}
+\]
+dove \(\mat{K}\) è la matrice intrinseca \(3\times3\) triangolare
+superiore, \(\mat{R}\in SO(3)\) la rotazione dal sistema del mondo a
+quello camera, e \(\mat{C}\in\mathbb{R}^3\) il centro ottico in
+coordinate mondo~\cite[Sez.~6.2]{HZ2004}.
+
+\subsection{Matrice intrinseca}
+
+\[
+  \mat{K} =
+  \begin{pmatrix}
+    f_x & s   & c_x \\
+    0   & f_y & c_y \\
+    0   & 0   & 1
+  \end{pmatrix},
+\]
+dove \(f_x = f/d_x\) e \(f_y = f/d_y\) sono le lunghezze focali in
+pixel (\(d_x, d_y\) dimensioni fisiche del pixel), \(s\) è lo skew
+(zero per i sensori moderni) e \((c_x,c_y)\) il punto
+principale~\cite[Sez.~6.2]{HZ2004}.
+
+\subsection{Retroproiezione e pseudoinversa}
+
+Dato \(\homo{x}\), l'insieme dei punti 3D compatibili è il raggio
+retroproiettato. Il punto di norma minima su tale raggio è
+\[
+  \homo{X}_0 = \mat{P}^+\homo{x},
+\]
+dove \(\mat{P}^+ = \mat{P}^T(\mat{P}\mat{P}^T)^{-1}\) è la
+pseudoinversa destra~\cite[Eq.~6.14]{HZ2004}.
+
+\subsection{Spazio duale e retroproiezione di coniche}
+
+La trasposta \(\mat{P}^T\) agisce sullo spazio duale:
+un piano \(\boldsymbol{\pi}\in\mathbb{P}^{3*}\) proietta in una retta
+\(\mathbf{l} = \mat{P}^T\boldsymbol{\pi}\) nel piano
+immagine~\cite[Sez.~8.1]{HZ2004}.
+La retroproiezione di una conica \(\Gamma\) genera un cono quadrico
+\[
+  \mat{Q} = \mat{P}^T\Gamma\,\mat{P}.
+\]

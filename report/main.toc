@@ -1,0 +1,41 @@
+\babel@toc {italian}{}\relax 
+\babel@toc {italian}{}\relax 
+\contentsline {section}{\numberline {1}Introduzione}{3}{section.1}%
+\contentsline {section}{\numberline {2}Fondamenti di Geometria Proiettiva}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Coordinate omogenee e spazio proiettivo}{3}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Trasformazioni proiettive e gerarchia}{4}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Birapporto}{4}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Conica assoluta e IAC}{4}{subsection.2.4}%
+\contentsline {section}{\numberline {3}Modello della Camera Proiettiva}{5}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Modello pinhole e decomposizione di \(\mathbf {P}\)}{5}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Matrice intrinseca}{6}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Retroproiezione e pseudoinversa}{6}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Spazio duale e retroproiezione di coniche}{6}{subsection.3.4}%
+\contentsline {section}{\numberline {4}Omografia, IAC e Stima di \(\mathbf {K}\)}{6}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Omografia indotta da un piano}{6}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Vincoli di ortonormalità e sistema lineare in \(\omega \)}{7}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Recupero degli estrinseci}{7}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Flusso geometrico completo}{8}{subsection.4.4}%
+\contentsline {section}{\numberline {5}Distorsione e Reprojection Error}{8}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Modello di distorsione radiale e tangenziale}{8}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Reprojection error --- la regola aurea}{9}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Motivazione per il GA}{9}{subsection.5.3}%
+\contentsline {section}{\numberline {6}Pattern Planare Custom e Confronto con Zhang}{9}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Il principio geometrico comune}{9}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Flusso di matching con pattern custom}{11}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Proiezione del sistema di riferimento sul target}{11}{subsection.6.3}%
+\contentsline {section}{\numberline {7}Ottimizzazione tramite Algoritmo Genetico}{11}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Motivazione}{11}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Codifica del cromosoma}{12}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Funzione di fitness}{12}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Operatori genetici}{12}{subsection.7.4}%
+\contentsline {paragraph}{Crossover uniforme.}{12}{section*.8}%
+\contentsline {paragraph}{Mutazione.}{12}{section*.9}%
+\contentsline {paragraph}{Catastrofe (tipo 1).}{12}{section*.10}%
+\contentsline {paragraph}{Catastrofe (tipo 2).}{12}{section*.11}%
+\contentsline {subsection}{\numberline {7.5}Schema evolutivo}{13}{subsection.7.5}%
+\contentsline {section}{\numberline {8}Risultati Sperimentali}{13}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Setup sperimentale}{13}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Calibrazione iniziale}{14}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Ottimizzazione GA}{14}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Verifica visiva}{14}{subsection.8.4}%

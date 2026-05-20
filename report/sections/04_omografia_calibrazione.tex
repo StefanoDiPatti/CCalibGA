@@ -1,0 +1,96 @@
+\section{Omografia, IAC e Stima di \texorpdfstring{\(\mat{K}\)}{K}}
+\label{sec:omografia_calib}
+
+\subsection{Omografia indotta da un piano}
+
+Quando il pattern è \emph{planare} (piano \(Z=0\)), la proiezione si
+riduce a una omografia \(\mat{H}\in\mathbb{P}^{2\times2}\):
+\[
+  \lambda\,\homo{x} = \mat{H}\,\homo{m},
+  \qquad
+  \mat{H} = \mat{K}\bigl[\mathbf{r}_1,\,\mathbf{r}_2,\,\mathbf{t}\bigr],
+  \label{eq:H_da_P}
+\]
+dove \(\mathbf{r}_1,\mathbf{r}_2\) sono le prime due colonne di
+\(\mat{R}\) e \(\mathbf{t}=-\mat{R}\mat{C}\)~\cite[Sez.~1.1]{Zhang2000}.
+
+La stima di \(\mat{H}\) per ogni vista avviene con l'algoritmo DLT
+(Direct Linear Transform): date \(n\geq4\) corrispondenze
+\(\homo{m}_i\leftrightarrow\homo{x}_i\), si costruisce un sistema
+lineare sovradeterminato in \(\mathrm{vec}(\mat{H})\) risolto per
+SVD~\cite[Alg.~4.2]{HZ2004}.
+
+\subsection{Vincoli di ortonormalità e sistema lineare in \(\omega\)}
+
+\begin{prop}
+Sia \(\mat{H} = [\mathbf{h}_1,\mathbf{h}_2,\mathbf{h}_3]\).
+Poiché \(\mathbf{r}_1 = \mat{K}^{-1}\mathbf{h}_1\) e
+\(\mathbf{r}_2 = \mat{K}^{-1}\mathbf{h}_2\) sono colonne ortonormali di
+\(\mat{R}\in SO(3)\), valgono i due vincoli:
+\begin{align}
+  \mathbf{h}_1^T\,\omega\,\mathbf{h}_2 &= 0,
+  \label{eq:vincolo1}\\
+  \mathbf{h}_1^T\,\omega\,\mathbf{h}_1 &=
+  \mathbf{h}_2^T\,\omega\,\mathbf{h}_2,
+  \label{eq:vincolo2}
+\end{align}
+dove \(\omega = (\mat{K}\mat{K}^T)^{-1}\) è la
+IAC~\eqref{eq:IAC}~\cite[Prop.~8.5 e App.~1]{Zhang2000}.
+Con \(n\geq3\) viste si ottiene un sistema lineare sovradeterminato
+in \(\omega\), risolto per minimi quadrati.
+\end{prop}
+
+Una volta stimata \(\omega\), si ottiene \(\mat{K}\) per
+decomposizione di Cholesky di \(\omega^{-1}=\mat{K}\mat{K}^T\).
+
+\subsection{Recupero degli estrinseci}
+
+Gli estrinseci \([\mat{R}_j|\mathbf{t}_j]\) di ciascuna vista si
+recuperano da \(\mat{H}_j\) e \(\mat{K}\):
+\[
+  \mathbf{r}_1 = \lambda\mat{K}^{-1}\mathbf{h}_1,\quad
+  \mathbf{r}_2 = \lambda\mat{K}^{-1}\mathbf{h}_2,\quad
+  \mathbf{t}   = \lambda\mat{K}^{-1}\mathbf{h}_3,
+  \label{eq:estrinseci}
+\]
+con \(\lambda = \|\mat{K}^{-1}\mathbf{h}_1\|^{-1}\).
+
+\subsection{Flusso geometrico completo}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[>=Stealth,
+  node distance=1.0cm and 0cm,
+  box/.style={draw, rounded corners=5pt, fill=blue!8,
+              minimum width=4.0cm, minimum height=0.85cm,
+              align=center, font=\small},
+  ebox/.style={draw, rounded corners=5pt, fill=green!10,
+               minimum width=4.0cm, minimum height=0.85cm,
+               align=center, font=\small},
+  arr/.style={->, thick}]
+
+  \node[box]  (imgs)  {\(n\geq3\) immagini del pattern};
+  \node[box,  below=of imgs]  (corr)  {Corrispondenze
+                                        \(\homo{m}_i\leftrightarrow\homo{x}_i\)};
+  \node[box,  below=of corr]  (H)     {DLT \(\Rightarrow\) stima
+                                        \(\mat{H}_j\) per ogni vista};
+  \node[box,  below=of H]     (omega) {Vincoli~\eqref{eq:vincolo1}\eqref{eq:vincolo2}
+                                        \(\Rightarrow\) stima IAC \(\omega\)};
+  \node[ebox, below=of omega] (K)     {Cholesky su \(\omega^{-1}\)
+                                        \(\Rightarrow\) \(\mat{K}\)};
+  \node[ebox, below=of K]     (ext)   {Eq.~\eqref{eq:estrinseci}
+                                        \(\Rightarrow\) \([\mat{R}_j|\mathbf{t}_j]\)};
+  \node[ebox, below=of ext]   (ref)   {Raffinamento LM
+                                        (reprojection error)};
+
+  \draw[arr] (imgs)  -- (corr);
+  \draw[arr] (corr)  -- (H);
+  \draw[arr] (H)     -- (omega);
+  \draw[arr] (omega) -- (K);
+  \draw[arr] (K)     -- (ext);
+  \draw[arr] (ext)   -- (ref);
+\end{tikzpicture}
+\caption{Flusso geometrico del metodo di Zhang. I blocchi verdi
+         producono i parametri finali~\cite[Fig.~1]{Zhang2000}.}
+\label{fig:flusso_zhang}
+\end{figure}

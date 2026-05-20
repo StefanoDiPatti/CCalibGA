@@ -1,0 +1,127 @@
+\section{Fondamenti di Geometria Proiettiva}
+\label{sec:geom_proj}
+
+\subsection{Coordinate omogenee e spazio proiettivo}
+
+Lo spazio proiettivo \(\mathbb{P}^n\) estende \(\mathbb{R}^n\) aggiungendo
+punti all'infinito: un punto di \(\mathbb{P}^n\) è una classe di equivalenza
+\([x_0 : x_1 : \cdots : x_n]\) con \((x_0,\dots,x_n)\neq\mathbf{0}\),
+dove due vettori sono equivalenti se proporzionali.
+
+In \(\mathbb{P}^2\) un punto euclideo \((x,y)\) si rappresenta come
+\(\homo{x} = (x_1, x_2, x_3)^T\) con \(x = x_1/x_3\),
+\(y = x_2/x_3\). Una retta di equazione \(ax+by+c=0\) corrisponde al
+vettore \(\mathbf{l}=(a,b,c)^T\), e il punto \(\homo{x}\) giace su
+\(\mathbf{l}\) se e solo se \(\mathbf{l}^T\homo{x} = 0\).
+
+\begin{defn}[Dualità in \(\mathbb{P}^2\)]
+In \(\mathbb{P}^2\) punti e rette sono \emph{duali}: ogni enunciato che
+coinvolge punti e rette rimane valido scambiando i due ruoli.
+L'intersezione di due rette \(\mathbf{l},\mathbf{m}\) è
+\(\homo{x} = \mathbf{l} \times \mathbf{m}\);
+la retta per due punti \(\homo{x},\homo{y}\) è
+\(\mathbf{l} = \homo{x} \times \homo{y}\).
+\end{defn}
+
+In \(\mathbb{P}^3\) un punto è \(\homo{X} = (X,Y,Z,W)^T\); un piano è
+il vettore duale \(\boldsymbol{\pi} = (\alpha,\beta,\gamma,\delta)^T\)
+tale che \(\boldsymbol{\pi}^T \homo{X} = 0\)~\cite[Cap.~2]{HZ2004}.
+
+\subsection{Trasformazioni proiettive e gerarchia}
+\label{sub:proiettivita}
+
+Una \emph{proiettività} (omografia) di \(\mathbb{P}^n\) è una biiezione
+indotta da una matrice invertibile \((n{+}1)\times(n{+}1)\):
+\[
+  \homo{x}' = \mat{H}\,\homo{x}, \qquad \mat{H} \in GL(n+1).
+\]
+
+\begin{table}[H]
+\centering
+\caption{Gerarchia delle trasformazioni planari con gradi di libertà (dof)
+         e invarianti geometrici \cite[Tab.~2.1]{HZ2004}.}
+\label{tab:trasformazioni}
+\begin{tabular}{llcc}
+\toprule
+\textbf{Tipo} & \textbf{Forma di \(\mat{H}\)} & \textbf{dof} & \textbf{Invarianti} \\
+\midrule
+Isometria    & \(\bigl(\begin{smallmatrix}\mat{R}&\mathbf{t}\\\mathbf{0}^T&1\end{smallmatrix}\bigr)\) & 3 & lunghezze, angoli \\
+Similarità   & \(\bigl(\begin{smallmatrix}s\mat{R}&\mathbf{t}\\\mathbf{0}^T&1\end{smallmatrix}\bigr)\) & 4 & angoli, rapporti di lunghezza \\
+Affinità     & \(\bigl(\begin{smallmatrix}\mat{A}&\mathbf{t}\\\mathbf{0}^T&1\end{smallmatrix}\bigr)\) & 6 & parallelismo, rapporti di aree \\
+Proiettività & \(\mat{H}\) (generica) & 8 & birapporto, collinearità \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Birapporto}
+
+Il \emph{birapporto} (cross-ratio) di quattro punti collineari
+\(A,B,C,D\) è l'unico invariante scalare delle proiettività:
+\[
+  (A,B;C,D)
+  \;=\;
+  \frac{\overline{AC}\cdot\overline{BD}}{\overline{AD}\cdot\overline{BC}},
+\]
+dove \(\overline{PQ}\) denota la distanza orientata tra \(P\) e \(Q\).
+Il birapporto è preservato da qualsiasi proiettività e rappresenta
+lo strumento canonico per verificare la coerenza delle corrispondenze
+punto-punto nel matching tra immagini~\cite[Sez.~2.4]{HZ2004}.
+
+\subsection{Conica assoluta e IAC}
+\label{sub:IAC}
+
+La \emph{conica assoluta} \(\Omega_\infty\) è definita come
+l'intersezione del piano all'infinito \(\pi_\infty\) (con \(W=0\) in
+\(\mathbb{P}^3\)) con la sfera unitaria; la sua matrice è
+\(\mat{I}_3\)~\cite[Sez.~8.3]{HZ2004}. I suoi punti soddisfano:
+\[
+  X^2+Y^2+Z^2=0, \quad W=0,
+\]
+e sono necessariamente complessi; i \emph{punti circolari all'infinito}
+\(\mathbf{I} = (1,i,0)^T\) e \(\mathbf{J}=(1,-i,0)^T\) ne sono la
+proiezione nel piano.
+
+L'\emph{Immagine della Conica Assoluta} (IAC), indicata con \(\omega\),
+è la proiezione di \(\Omega_\infty\) tramite \(\mat{P}=\mat{K}[\mat{R}|\mathbf{t}]\):
+\[
+  \omega = \mat{K}^{-T}\mat{K}^{-1} = (\mat{K}\mat{K}^T)^{-1}.
+  \label{eq:IAC}
+\]
+Questa relazione è il cuore del metodo di Zhang: imporre che
+\(\mat{H}\) mappi \(\Omega_\infty\) in \(\omega\) fornisce due equazioni
+lineari nei coefficienti di \(\omega\), da cui si estrae \(\mat{K}\) per
+decomposizione di Cholesky~\cite[Prop.~8.5]{HZ2004}.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=1.0, >=Stealth,
+  plane/.style={draw=gray!60, fill=gray!10, opacity=0.8},
+  arr/.style={->, thick, blue!70!black}]
+
+  \draw[plane] (-1.5,-0.8) -- (1.5,-0.8) -- (2.5,0.5) -- (-0.5,0.5) -- cycle;
+  \node[below right, gray] at (2.3,0.5) {\small Piano \(Z=0\)};
+
+  \draw[plane, fill=orange!15]
+    (3.5,-0.8) -- (5.5,-0.8) -- (5.5,1.6) -- (3.5,1.6) -- cycle;
+  \node[above, orange!70!black] at (4.5,1.65) {\small Piano immagine};
+
+  \node[circle, fill=black, inner sep=2pt,
+        label=above:{\small\(\mat{C}\)}] (C) at (2.0,1.8) {};
+
+  \foreach \px/\py/\qx/\qy in
+    {0.0/-0.2/3.9/0.2, 0.5/0.3/4.3/0.9, -0.5/0.1/4.1/0.5}{
+    \draw[arr] (C) -- (\px,\py);
+    \draw[arr,dashed] (\px,\py) -- (\qx,\qy);
+  }
+
+  \node[below] at (0.0,-0.25) {\small \(\homo{X}\)};
+  \node[right]  at (4.15,0.5) {\small \(\homo{x}\)};
+
+  \draw[->, thick, red!70!black] (1.0,0.3) to[bend left=20]
+    node[above, red!70!black] {\(\mat{H}\)} (3.9,0.5);
+\end{tikzpicture}
+\caption{Proiettività \(\mat{H}\colon\mathbb{P}^2\to\mathbb{P}^2\) indotta
+         dalla camera: mette in corrispondenza il piano \(Z=0\) del target
+         con il piano immagine.}
+\label{fig:omografia}
+\end{figure}
