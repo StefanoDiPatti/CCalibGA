@@ -1,13 +1,16 @@
 \documentclass[12pt,a4paper]{article}
 
+
 %% Encoding & language
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[italian]{babel}
 
+
 %% Math
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{mathtools}
+
 
 %% Layout
 \usepackage{geometry}
@@ -15,19 +18,23 @@
 \usepackage{setspace}
 \onehalfspacing
 
+
 %% Graphics & figures
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{caption}
 \usepackage{subcaption}
 
+
 %% TikZ
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,calc,positioning,fit,shapes.geometric}
 
+
 %% Tables
 \usepackage{booktabs}
 \usepackage{array}
+
 
 %% Hyperlinks
 \usepackage{hyperref}
@@ -40,21 +47,25 @@
   pdfauthor={Stefano Di Patti}
 }
 
+
 %% Misc
 \usepackage{xcolor}
 \usepackage{microtype}
 \usepackage{enumitem}
+
 
 %% Theorem environments
 \newtheorem{defn}{Definizione}[section]
 \newtheorem{prop}[defn]{Proposizione}
 \newtheorem{oss}[defn]{Osservazione}
 
+
 %% Shortcuts
 \newcommand{\homo}[1]{\tilde{\mathbf{#1}}}
 \newcommand{\mat}[1]{\mathbf{#1}}
 \newcommand{\vect}[1]{\mathbf{#1}}
 \newcommand{\norm}[1]{\left\|#1\right\|}
+
 
 \title{%
   \textbf{CCalibGA}\\[0.4em]
@@ -65,11 +76,14 @@
   \small Università degli Studi di Milano}
 \date{Anno scolastico 2025/2026}
 
+
 \begin{document}
+
 
 \maketitle
 \tableofcontents
 \newpage
+
 
 \input{sections/01_introduzione}
 \input{sections/02_geometria_proiettiva}
@@ -79,8 +93,11 @@
 \input{sections/06_pattern_custom}
 \input{sections/07_algoritmo_genetico}
 \input{sections/08_risultati}
+\input{sections/10_riferimento_affine_rettifica}
+
 
 \bibliographystyle{plain}
 \bibliography{references}
+
 
 \end{document}

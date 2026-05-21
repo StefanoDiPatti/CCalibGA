@@ -27,6 +27,37 @@ In \(\mathbb{P}^3\) un punto è \(\homo{X} = (X,Y,Z,W)^T\); un piano è
 il vettore duale \(\boldsymbol{\pi} = (\alpha,\beta,\gamma,\delta)^T\)
 tale che \(\boldsymbol{\pi}^T \homo{X} = 0\)~\cite[Cap.~2]{HZ2004}.
 
+\subsection{Punti propri e punti impropri}
+\label{sub:punti_propri_impropri}
+
+In \(\mathbb{P}^2\) un punto \(\homo{x} = (x_1, x_2, x_3)^T\) si dice
+\emph{proprio} se \(x_3 \neq 0\): in tal caso la divisione per \(x_3\)
+restituisce le coordinate euclidee finite \((x_1/x_3,\, x_2/x_3)\).
+Se invece \(x_3 = 0\), il punto è \emph{improprio} (o \emph{punto
+all'infinito}) e rappresenta una \emph{direzione} nel piano:
+non ha controparte euclidea, ma è pienamente definito come
+elementodi \(\mathbb{P}^2\).
+
+\begin{oss}
+Il piano all'infinito \(\pi_\infty\) di \(\mathbb{P}^3\) ha equazione
+omogenea \(W = 0\) ed è il luogo dei punti impropri dello spazio;
+in \(\mathbb{P}^2\) la retta all'infinito \(\mathbf{l}_\infty = (0,0,1)^T\)
+è il luogo dei punti impropri del piano.
+Rette parallele di direzione \(\mathbf{d} = (d_1, d_2)^T\) si incontrano
+tutte nel punto improprio \((d_1, d_2, 0)^T \in \mathbf{l}_\infty\).
+\end{oss}
+
+Questa distinzione è operativamente rilevante per il progetto:
+quando la camera osserva il pattern planare, la proiezione prospettica
+trasforma punti propri del piano del target in punti propri
+dell'immagine. Tuttavia la retta all'infinito \(\mathbf{l}_\infty\)
+del piano del pattern viene mappata in una retta propria
+dell'immagine (la \emph{retta orizzonte}), e i punti impropri del
+pattern corrispondono ai \emph{punti di fuga} nell'immagine~\cite[Sez.~2.2]{HZ2004}.
+Riportare l'immagine a una vista rettificata equivale quindi
+a rimandare la retta orizzonte verso l'infinito, ripristinando
+la struttura affine del piano originale.
+
 \subsection{Trasformazioni proiettive e gerarchia}
 \label{sub:proiettivita}
 
@@ -35,6 +66,14 @@ indotta da una matrice invertibile \((n{+}1)\times(n{+}1)\):
 \[
   \homo{x}' = \mat{H}\,\homo{x}, \qquad \mat{H} \in GL(n+1).
 \]
+
+Poiché \(\mat{H}\) è invertibile, anche la trasformazione inversa
+\(\homo{x} = \mat{H}^{-1}\homo{x}'\) è una proiettività. Questo fatto,
+apparentemente ovvio, è geometricamente rilevante: l'omografia che
+correla il piano del pattern con il piano immagine può essere
+invertita per ottenere la vista rettificata, e tale inversione
+è ancora una proiettività — nessuna nuova classe di trasformazione
+è necessaria per descrivere la rettifica.
 
 \begin{table}[H]
 \centering
@@ -52,6 +91,41 @@ Proiettività & \(\mat{H}\) (generica) & 8 & birapporto, collinearità \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\subsection{Le affinità come caso speciale delle proiettività}
+\label{sub:affinita_proiettivita}
+
+Dall'ispezione della Tabella~\ref{tab:trasformazioni} emerge la gerarchia:
+\[
+  \text{Isometrie} \subset \text{Similarità} \subset \text{Affinità}
+  \subset \text{Proiettività}.
+\]
+Una trasformazione affine ha la forma
+\[
+  \mat{H}_{\text{aff}} =
+  \begin{pmatrix} \mat{A} & \mathbf{t} \\ \mathbf{0}^T & 1 \end{pmatrix},
+  \qquad \mat{A} \in GL(2),
+\]
+dove l'ultima riga è fissa a \((0,0,1)\). Questo vincolo ha una
+interpretazione geometrica precisa: una trasformazione affine
+\emph{manda i punti impropri in punti impropri}, cioè preserva
+la retta all'infinito \(\mathbf{l}_\infty\) come insieme
+(non necessariamente punto per punto). In altre parole, le rette
+parallele prima della trasformazione rimangono parallele dopo,
+perché i loro punti di fuga restano su \(\mathbf{l}_\infty\).
+
+Una proiettività generica, invece, può mappare punti impropri
+in punti propri e viceversa: è esattamente questo che accade
+quando la camera inquadra il pattern da una posa obliqua,
+portando i punti di fuga del pattern all'interno dell'immagine.
+La rettifica dell'immagine consiste nel trovare una omografia
+\(\mat{H}\) che riporti quei punti di fuga all'infinito,
+restaurando la struttura affine del piano originale.
+
+In CCalibGA questa comprensione è fondamentale: la matrice
+intrinseca \(\mat{K}\) e la posa \([\mat{R}|\mathbf{t}]\)
+stimate durante la calibrazione permettono di costruire esattamente
+quell'omografia di rettifica.
 
 \subsection{Birapporto}
 
