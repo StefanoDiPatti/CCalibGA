@@ -1,58 +1,192 @@
 \section{Modello della Camera Proiettiva}
 \label{sec:modello_camera}
 
-\subsection{Modello pinhole e decomposizione di \texorpdfstring{\(\mat{P}\)}{P}}
+\subsection{Costruzione geometrica della proiezione centrale}
+\label{sub:costruzione_geom}
 
-Una \emph{camera finita} è modellata dalla relazione proiettiva
+Si considera un punto \(P\) dello spazio affine tridimensionale e si
+vuole determinarne l'immagine sul piano \(\pi\), avente normale
+\(\mathbf{n}=(a,b,c)^T\) e passante per \(P_0\). In coordinate affini
+la sua equazione è
+\[
+  a(x-x_0)+b(y-y_0)+c(z-z_0)=0,
+  \qquad\text{ovvero}\quad
+  \boldsymbol{\pi}^T\homo{X}=0,
+\]
+dove \(\boldsymbol{\pi}=(a,b,c,d)^T\) con \(d=-(ax_0+by_0+cz_0)\) è
+la forma proiettiva del piano.  Il \emph{centro di proiezione} (occhio)
+è \(E\), ipotizzato esterno a \(\pi\).
+
+La retta \(EP\) si \emph{parametrizza} in coordinate omogenee come
+\[
+  \homo{Q}(T) = (1-T)\,\homo{E} + T\,\homo{P}, \qquad T\in\mathbb{R}.
+\]
+Imponendo che \(\homo{Q}(T^*)\) appartenga al piano,
+\(\boldsymbol{\pi}^T\homo{Q}(T^*)=0\), si ottiene
+\[
+  (1-T^*)\,\boldsymbol{\pi}^T\homo{E}
+  + T^*\,\boldsymbol{\pi}^T\homo{P} = 0
+  \implies
+  T^* = \frac{\boldsymbol{\pi}^T\homo{E}}
+             {\boldsymbol{\pi}^T\homo{E}-\boldsymbol{\pi}^T\homo{P}}.
+\]
+Sostituendo si ottiene
+\begin{equation}
+  \homo{Q}^* =
+  \bigl(\boldsymbol{\pi}^T\homo{P}\bigr)\,\homo{E}
+  -\bigl(\boldsymbol{\pi}^T\homo{E}\bigr)\,\homo{P}.
+  \label{eq:proiezione_geom}
+\end{equation}
+Questa espressione è \emph{lineare} in \(\homo{P}\): il punto
+proiettato è una combinazione lineare di \(\homo{E}\) e di \(\homo{P}\)
+con coefficienti che dipendono solo da \(\boldsymbol{\pi}\) e da \(E\).
+La struttura matriciale della proiezione emerge quindi naturalmente.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=1.05, >=Stealth,
+  plane/.style={draw=gray!60, fill=gray!10, opacity=0.8},
+  arr/.style={->, thick, blue!70!black}]
+
+  % Piano pi
+  \draw[plane] (-1.5,-0.8) -- (1.5,-0.8)
+               -- (2.5,0.5) -- (-0.5,0.5) -- cycle;
+  \node[below right, gray] at (2.2,0.5) {\small Piano \(\pi\)};
+  \node[circle, fill=gray!60, inner sep=1.5pt,
+        label=below:{\small\(P_0\)}] at (0.5,-0.15) {};
+
+  % Punto P dello spazio
+  \node[circle, fill=blue!60, inner sep=2pt] (P) at (4.0,2.2) {};
+  \node[above, blue!70!black] at (P) {\small\(P\)};
+
+  % Centro di proiezione E
+  \node[circle, fill=red!70, inner sep=2.5pt,
+        label=above:{\small\(E\)}] (E) at (-1.8,1.6) {};
+
+  % Retta EP
+  \draw[-, dashed, gray!60] (E) -- (P);
+
+  % Punto proiettato Q*
+  \node[circle, fill=red!40, inner sep=2pt] (Q) at (0.7,0.2) {};
+  \node[below right, red!60!black] at (Q) {\small\(Q^*=\homo{Q}(T^*)\)};
+  \draw[arr] (E) -- (Q);
+  \draw[-,dashed,blue!40] (Q) -- (P);
+
+  % Freccia T*
+  \draw[<->, gray, very thin] (E.south) -- (Q.west)
+        node[midway, below, font=\scriptsize, gray] {\(T^*\)};
+\end{tikzpicture}
+\caption{Costruzione geometrica della proiezione centrale: la retta
+\(EP\) parametrizzata in \(T\) interseca \(\pi\) nel punto
+\(Q^*=\homo{Q}(T^*)\).}
+\label{fig:costruzione_EP}
+\end{figure}
+
+\subsection{Dalla proiezione 3D alla matrice \texorpdfstring{\(4\times4\)}{4x4}}
+\label{sub:matrice4x4}
+
+Scritti i quattro vettori colonna nella posizione naturale,
+l'equazione~\eqref{eq:proiezione_geom} si riscrive come prodotto
+matriciale:
+\[
+  \homo{Q}^*
+  = \underbrace{\bigl(
+      \homo{E}\,\boldsymbol{\pi}^T
+      - (\boldsymbol{\pi}^T\homo{E})\,I_4
+    \bigr)}_{M_{4\times4}}\homo{P}.
+\]
+La matrice \(M_{4\times4}\) è quella che agisce sullo spazio
+proiettivo \(\mathbb{P}^3\) intero e \emph{schiaccia} ogni punto su
+\(\pi\): per costruzione \(\operatorname{rank}(M)=3\) (non è
+invertibile, come ci si aspetta da una proiezione).  Ogni punto della
+retta \(EP\) viene mandato in \(Q^*\): la fibra della trasformazione
+è la retta stessa, il che conferma che \(M\) descrive correttamente
+la proiezione prospettica.
+
+\subsection{Sistema di riferimento del piano immagine
+            e passaggio alla matrice \texorpdfstring{\(3\times4\)}{3x4}}
+\label{sub:piano_immagine}
+
+Il punto \(Q^*\) è ancora espresso in coordinate omogenee
+dello \emph{spazio}.  Per ottenere le coordinate \emph{schermo}
+\((u,v)\) si introduce un sistema di riferimento del piano \(\pi\):
+\begin{itemize}
+  \item \(P_0\): origine del piano immagine (punto principale proiettato);
+  \item \(\mathbf{w}_1, \mathbf{w}_2\): due versori contenuti in \(\pi\),
+        ortogonali fra loro e con \(\mathbf{n}=(a,b,c)^T\), in modo che
+        la terna \((\mathbf{w}_1,\mathbf{w}_2,\mathbf{n})\) sia ortonormale.
+\end{itemize}
+Le coordinate schermo si ricavano proiettando \(Q^*-P_0\) lungo i
+versori:
+\[
+  u = \mathbf{w}_1^T(Q^*-P_0), \qquad v = \mathbf{w}_2^T(Q^*-P_0).
+\]
+Questo passaggio è precisamente quello codificato dalla matrice
+intrinseca \(\mat{K}\):
+\begin{itemize}
+  \item \(f_x, f_y\): scala di \(\mathbf{w}_1,\mathbf{w}_2\) da unità
+        fisiche a pixel lungo i rispettivi assi;
+  \item \((c_x,c_y)\): offset dell'origine \(P_0\) rispetto
+        all'angolo del sensore;
+  \item \(s\) (skew): inclinazione di \(\mathbf{w}_1\) rispetto
+        all'asse orizzontale del sensore (zero per sensori moderni).
+\end{itemize}
+Il risultato finale è quindi la\emph{camera matrix} \(3\times4\),
+composizione della proiezione \(M_{4\times4}\) con il cambio di
+base del piano:
 \[
   \lambda\,\homo{x} = \mat{P}\,\homo{X},
-  \qquad \mat{P}\in\mathbb{R}^{3\times4},\quad\lambda\neq0,
+  \qquad \mat{P}\in\mathbb{R}^{3\times4}.
   \label{eq:modello_camera}
 \]
-dove \(\homo{X}\in\mathbb{P}^3\) è un punto della scena e
-\(\homo{x}\in\mathbb{P}^2\) è la sua proiezione sul piano
-immagine~\cite[Cap.~6]{HZ2004}.
 
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[>=Stealth, scale=1.1]
   \node[circle, fill=black!80, inner sep=2.5pt,
-        label=left:{\small\(\mat{C}\)}] (C) at (0,0) {};
+        label=left:{\small\(E\)}] (C) at (0,0) {};
 
   \draw[thick, orange!70!black] (2.5,-1.5) -- (2.5,1.5);
   \node[right, orange!70!black] at (2.55,1.5)
-        {\small piano immagine};
+        {\small piano \(\pi\)};
 
   \draw[->, gray, dashed] (C) -- (4.5,0)
-        node[right]{\small asse \(Z\)};
+        node[right]{\small asse \(Z\) (ottico)};
+
+  % w1, w2 sul piano
+  \draw[->, thick, green!60!black] (2.5,0) -- (2.5,0.9)
+        node[right, font=\small]{\(\mathbf{w}_2\) (\(v\))};
+  \draw[->, thick, teal] (2.5,0) -- (3.2,0)
+        node[below, font=\small]{\(\mathbf{w}_1\) (\(u\))};
+  \node[circle, fill=gray!60, inner sep=1.5pt,
+        label=below:{\small\(P_0\) (c_x,c_y)}] at (2.5,0) {};
 
   \node[circle, fill=blue!60, inner sep=2pt] (X) at (4.0,1.1) {};
   \node[above, blue!70!black] at (4.0,1.1) {\small\(\homo{X}\)};
-
   \draw[-, blue!40] (C) -- (X);
   \draw[dashed, blue!40] (X) -- (2.5,0.69);
-
   \node[circle, fill=red!70, inner sep=2pt] at (2.5,0.69) {};
-  \node[right, red!70!black] at (2.5,0.69) {\small\(\homo{x}\)};
-
+  \node[right, red!70!black] at (2.5,0.69) {\small\(\homo{x}=(u,v)\)};
   \draw[<->, gray] (0,-1.7) -- (2.5,-1.7)
         node[midway, below] {\small\(f\)};
 \end{tikzpicture}
-\caption{Modello pinhole: \(\homo{X}\) proiettato su \(\homo{x}\)
-         attraverso il centro ottico \(\mat{C}\) a distanza
-         focale \(f\)~\cite[Fig.~6.1]{HZ2004}.}
+\caption{Piano immagine con sistema di riferimento \((P_0,\mathbf{w}_1,
+\mathbf{w}_2)\). Il punto principale \(P_0=(c_x,c_y)\) è il piede
+dell'asse ottico; \(f_x,f_y\) scalano le unità fisiche in pixel~\cite[Cap.~6]{HZ2004}.}
 \label{fig:pinhole}
 \end{figure}
 
-La decomposizione canonica di \(\mat{P}\) è:
+\subsection{Decomposizione canonica di \texorpdfstring{\(\mat{P}\)}{P}}
+
+La \emph{anatomia} della camera proiettiva è la decomposizione
 \[
   \mat{P} = \mat{K}\bigl[\mat{R}\mid-\mat{R}\mat{C}\bigr],
   \label{eq:decomp_P}
 \]
-dove \(\mat{K}\) è la matrice intrinseca \(3\times3\) triangolare
-superiore, \(\mat{R}\in SO(3)\) la rotazione dal sistema del mondo a
-quello camera, e \(\mat{C}\in\mathbb{R}^3\) il centro ottico in
-coordinate mondo~\cite[Sez.~6.2]{HZ2004}.
+dove \(\mat{K}\) è la matrice intrinseca triangolare superiore,
+\(\mat{R}\in SO(3)\) la rotazione dal sistema del mondo a quello
+camera, e \(\mat{C}\in\mathbb{R}^3\) il centro ottico in coordinate
+mondo~\cite[Sez.~6.2]{HZ2004}.
 
 \subsection{Matrice intrinseca}
 
@@ -64,10 +198,27 @@ coordinate mondo~\cite[Sez.~6.2]{HZ2004}.
     0   & 0   & 1
   \end{pmatrix},
 \]
-dove \(f_x = f/d_x\) e \(f_y = f/d_y\) sono le lunghezze focali in
-pixel (\(d_x, d_y\) dimensioni fisiche del pixel), \(s\) è lo skew
-(zero per i sensori moderni) e \((c_x,c_y)\) il punto
-principale~\cite[Sez.~6.2]{HZ2004}.
+dove \(f_x = f/d_x\) e \(f_y = f/d_y\) sono le focali in pixel
+(\(d_x, d_y\) dimensioni fisiche del pixel), \(s\) lo skew e
+\((c_x,c_y)\) il punto principale, tutti motivati geometricamente
+come illustrato nella Sezione~\ref{sub:piano_immagine}~\cite[Sez.~6.2]{HZ2004}.
+
+\subsection{Stima diretta di \texorpdfstring{\(\mat{P}\)}{P} da corrispondenze generali}
+\label{sub:stima_P_diretta}
+
+Nel caso generale (punti 3D non planari), dati \(n\geq 6\) punti
+corrispondenti \(\homo{X}_i \leftrightarrow \homo{x}_i\), la
+condizione \(\homo{x}_i \times \mat{P}\homo{X}_i=0\) genera per
+ogni coppia due equazioni lineari nei dodici elementi di \(\mat{P}\).
+L'intero sistema ha \(2n\) equazioni in 11 incognite effettive
+(la scala è libera): si risolve per DLT/SVD come per l'omografia.
+
+\begin{oss}
+CCalibGA usa un pattern \emph{planare}, per cui tutte le corrispondenze
+hanno \(Z=0\) e il problema si riduce alla stima di omografie \(\mat{H}_j\)
+(una per vista), che è numericamente più stabile e richiede meno punti
+per vista~\cite[Sez.~7.1]{HZ2004}.
+\end{oss}
 
 \subsection{Retroproiezione e pseudoinversa}
 
@@ -78,14 +229,3 @@ retroproiettato. Il punto di norma minima su tale raggio è
 \]
 dove \(\mat{P}^+ = \mat{P}^T(\mat{P}\mat{P}^T)^{-1}\) è la
 pseudoinversa destra~\cite[Eq.~6.14]{HZ2004}.
-
-\subsection{Spazio duale e retroproiezione di coniche}
-
-La trasposta \(\mat{P}^T\) agisce sullo spazio duale:
-un piano \(\boldsymbol{\pi}\in\mathbb{P}^{3*}\) proietta in una retta
-\(\mathbf{l} = \mat{P}^T\boldsymbol{\pi}\) nel piano
-immagine~\cite[Sez.~8.1]{HZ2004}.
-La retroproiezione di una conica \(\Gamma\) genera un cono quadrico
-\[
-  \mat{Q} = \mat{P}^T\Gamma\,\mat{P}.
-\]

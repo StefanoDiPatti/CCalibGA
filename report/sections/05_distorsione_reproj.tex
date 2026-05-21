@@ -13,8 +13,8 @@ introducono \emph{distorsione}: il punto effettivamente osservato
         +p_1(r^2+2y_n^2)+2p_2x_ny_n,
 \end{align}
 dove \(r^2=x_n^2+y_n^2\), \(k_1,k_2,k_3\) sono i coefficienti di
-distorsione radiale e \(p_1,p_2\) quelli
-tangenziali~\cite[Sez.~6.5]{HZ2004}.
+distorsione radiale (modello di Brown--Conrady~\cite{Brown1966}) e
+\(p_1,p_2\) quelli tangenziali.
 
 \subsection{Reprojection error --- la regola aurea}
 \label{sub:reproj}
@@ -29,20 +29,59 @@ calibrazione si misura con il \emph{reprojection error} medio:
   \label{eq:reproj}
 \]
 dove \(\hat{\homo{x}}_{ji}=\pi(\mat{K}[\mat{R}_j|\mathbf{t}_j]\homo{X}_i,
-\mathbf{k}_r)\) è la riproiezione del punto 3D~\cite[Sez.~5.1]{HZ2004}.
+\mathbf{k}_r)\) è la riproiezione del punto 3D.
 
-Questa distanza nel piano immagine è la \emph{Gold Standard}: minimizzare
-\(\epsilon_{\text{RMSE}}\) equivale a trovare i parametri che meglio
-spiegano le corrispondenze osservate~\cite[Sez.~5.1]{HZ2004}.
+\subsection{La regola aurea come proiezione su una varietà}
+\label{sub:golden_rule}
+
+L'idea fondamentale della \emph{Gold Standard algorithm} (H\&Z
+§~4.2--4.3, §~5.1) è geometrica prima che algebrica.  I parametri
+stimati nella fase lineare (DLT, Cholesky) definiscono un punto
+\(\hat{\theta}\) nello spazio dei parametri, ma i dati misurati con
+rumore producono un sistema \emph{inconsistente}: non esiste un
+\(\theta\) che soddisfi esattamente tutte le equazioni.  La
+\emph{soluzione corretta} non è quella che azzera le equazioni, ma
+quella che minimizza la distanza geometrica tra i punti misurati e
+la \emph{varietà delle configurazioni ammissibili}:
+\[
+  \hat{\theta}^* = \arg\min_{\theta}\sum_i
+  d\bigl(\tilde{x}_i,\, V(\theta)\bigr)^2,
+\]
+dove \(V(\theta)\) è la varietà delle corrispondenze perfette e
+\(d(\cdot,V)\) è la distanza Euclidea~\cite[Sez.~4.2.5]{HZ2004}.
+
+Per capire l'idea, si consideri il caso elementare della stima di una
+matrice \(2\times2\) con vincolo \(\det A=0\): le matrici ammissibili
+formano una ipersuperficie nell'\(\mathbb{R}^4\) degli elementi,
+e il problema diventa trovare il punto su questa ipersuperficie più
+vicino alla matrice osservata (affetta da rumore).  Analogamente,
+nella calibrazione \(V(\theta)\) è la varietà delle omografie
+\(\mat{H}\) coerenti con una certa \(\mat{K}\), e la proiezione
+orthogonale su \(V\) è realizzata numericamente da
+\textbf{Levenberg--Marquardt (LM)}.
+
+LM minimizza \(\epsilon_{\text{RMSE}}\) combinando due regimi:
+\begin{itemize}
+  \item quando il parametro \(\mu\) è grande, si comporta come
+        \emph{discesa del gradiente} (passo corto, robusto);
+  \item quando \(\mu\) è piccolo, converge al \emph{metodo di
+        Gauss--Newton} (convergenza quadratica locale).
+\end{itemize}
+Ad ogni iterazione si risolve il sistema normale aumentato
+\((J^T J + \mu I)\,\delta = -J^T\mathbf{r}\),
+dove \(J=\partial\hat{\mathbf{x}}/\partial\theta\) è il Jacobiano
+analico della funzione di riproiezione rispetto a tutti i parametri.
+
+Questo raffinamento è quello che \texttt{cv2.calibrateCamera()}
+esegue automaticamente; il GA (Sezione~\ref{sec:ga}) agisce
+\emph{prima}, selezionando il sottoinsieme di immagini per cui LM
+trooverà un minimo globale migliore~\cite[Sez.~5.1]{HZ2004}.
 
 \subsection{Motivazione per il GA}
 
-Il raffinamento finale di Zhang minimizza \eqref{eq:reproj} tramite
-Levenberg-Marquardt (LM), richiedendo il Jacobiano della funzione di
-riproiezione. LM è localmente efficiente, ma dipende dalla qualità delle
-immagini: immagini sfocate, pose troppo simili o corrispondenze errate
-degradano l'ottimo locale raggiunto.
-
-La \emph{selezione del sottoinsieme} di immagini è un problema
-combinatorio su cui LM non agisce: è esattamente questo spazio che
-l'Algoritmo Genetico esplora (Sezione~\ref{sec:ga}).
+Il raffinamento LM minimizza \eqref{eq:reproj} rispetto ai parametri
+continui, ma non può scegliere quali immagini includere né i flag
+del solver, perché queste sono variabili discrete. Immagini sfocate,
+pose troppo simili o corrispondenze errate degradano l'ottimo locale
+raggiunto da LM: è esattamente questo spazio combinatorio che il GA
+esplora (Sezione~\ref{sec:ga}).

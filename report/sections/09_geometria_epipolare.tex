@@ -1,0 +1,165 @@
+\section{Cenni di Geometria Epipolare}
+\label{sec:epipolare}
+
+La geometria epipolare descrive i vincoli geometrici imposti su
+coppie di immagini di una stessa scena riprese da due camere diverse.
+Anche se CCalibGA è un calibratore \emph{monoculare}, la geometria
+epipolare è parte integrante del programma del corso e costituisce il
+naturale completamento del modello di camera proiettiva sviluppato
+nelle sezioni precedenti.
+
+\subsection{Configurazione epipolare}
+
+Siano \(\mat{P}=\mat{K}[\mat{I}\mid\mathbf{0}]\) e
+\(\mat{P}'=\mat{K}'[\mat{R}\mid\mathbf{t}]\) le due camere con
+centri \(C\) e \(C'\).  Dato un punto \(\homo{X}\) della scena,
+le sue proiezioni \(\homo{x}=\mat{P}\homo{X}\) e
+\(\homo{x}'=\mat{P}'\homo{X}\) sono \emph{punti corrispondenti}.
+
+I cinque elementi fondamentali della configurazione sono:
+\begin{itemize}
+  \item \textbf{Linea base}: la retta che congiunge \(C\) e \(C'\);
+  \item \textbf{Epipoli} \(\mathbf{e},\mathbf{e}'\): le proiezioni del
+        centro dell'altra camera
+        (\(\mathbf{e}=\mat{P}\homo{C}'\),
+        \(\mathbf{e}'=\mat{P}'\homo{C}\));
+  \item \textbf{Piano epipolare}: ogni piano contenente la linea base
+        e il punto \(\homo{X}\);
+  \item \textbf{Rette epipolari} \(l,l'\): le intersezioni del piano
+        epipolare con ciascun piano immagine; tali rette passano
+        rispettivamente per \(\mathbf{e}\) e \(\mathbf{e}'\).
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[>=Stealth, scale=0.95,
+  cam/.style={draw=black!70, fill=gray!15, rounded corners=3pt,
+              minimum width=1.0cm, minimum height=1.4cm}]
+
+  % Camera sinistra
+  \node[cam] (Cl) at (-3.5, 0) {};
+  \node[below=2pt] at (-3.5,-0.7) {\small\(C\)};
+  \draw[thick, orange!70!black] (-2.8,-1.0) -- (-2.8,1.0)
+        node[right, font=\small, orange!70!black] {\(\pi_L\)};
+
+  % Camera destra
+  \node[cam] (Cr) at (3.5, 0) {};
+  \node[below=2pt] at (3.5,-0.7) {\small\(C'\)};
+  \draw[thick, teal!80!black] (2.8,-1.0) -- (2.8,1.0)
+        node[left, font=\small, teal] {\(\pi_R\)};
+
+  % Linea base
+  \draw[dashed, gray] (-3.5,0) -- (3.5,0)
+        node[midway, above, font=\scriptsize, gray] {linea base};
+
+  % Punto X
+  \node[circle, fill=blue!60, inner sep=2pt] (X) at (0, 2.2) {};
+  \node[above] at (X) {\small\(\homo{X}\)};
+
+  % Raggi di proiezione
+  \draw[->, blue!40, dashed] (-3.5,0) -- (-2.8, 0.75)
+        node[left, font=\scriptsize, blue!60] {\(\homo{x}\)};
+  \draw[->, blue!40, dashed] (3.5,0)  -- (2.8, 0.75)
+        node[right, font=\scriptsize, teal!70!black] {\(\homo{x}'\)};
+  \draw[-, blue!20] (-3.5,0) -- (X);
+  \draw[-, blue!20] (3.5,0)  -- (X);
+
+  % Epipoli
+  \node[circle, fill=red!60, inner sep=1.5pt,
+        label=below:{\small\(\mathbf{e}\)}] at (-2.8,0) {};
+  \node[circle, fill=red!60, inner sep=1.5pt,
+        label=below:{\small\(\mathbf{e}'\)}] at (2.8,0) {};
+
+  % Rette epipolari
+  \draw[red!50, thick] (-2.8,-0.6) -- (-2.8, 0.9)
+        node[left, font=\scriptsize, red!60] {\(l\)};
+  \draw[red!50, thick] (2.8,-0.6) -- (2.8, 0.9)
+        node[right, font=\scriptsize, red!60] {\(l'\)};
+\end{tikzpicture}
+\caption{Configurazione epipolare: \(\homo{X}\), \(C\), \(C'\) definiscono
+il piano epipolare; le sue intersezioni con \(\pi_L\) e \(\pi_R\) sono le
+rette epipolari \(l\) e \(l'\), che passano per gli epipoli~\cite[Cap.~9]{HZ2004}.}
+\label{fig:epipolar}
+\end{figure}
+
+\subsection{Matrice fondamentale \texorpdfstring{\(F\)}{F}}
+
+Il vincolo epipolare si esprime tramite la \emph{matrice fondamentale}
+\(F\in\mathbb{R}^{3\times3}\), che associa a ogni punto \(\homo{x}\)
+del primo piano la corrispondente retta epipolare
+\(l'=F\homo{x}\) nel secondo:
+\begin{equation}
+  \homo{x}'^T F\,\homo{x} = 0
+  \qquad \forall\;\text{punti corrispondenti}\;(\homo{x},\homo{x}').
+  \label{eq:vincolo_ep}
+\end{equation}
+
+\begin{prop}[Proprietà di \(F\)]
+La matrice fondamentale è un'omografia singolare di rango 2, definita
+a meno di scala, con 7 gradi di libertà.  Vale:
+\[
+  F\mathbf{e}=\mathbf{0}, \qquad F^T\mathbf{e}'=\mathbf{0}:
+\]
+gli epipoli sono rispettivamente il vettore nullo destro e sinistro di
+\(F\)~\cite[Sez.~9.2]{HZ2004}.
+\end{prop}
+
+In termini delle matrici di camera, \(F\) ha la forma algebrica
+\[
+  F = [\mathbf{e}']_{\times}\,\mat{P}'\mat{P}^+,
+  \label{eq:F_dalle_camere}
+\]
+dove \([\cdot]_{\times}\) indica la matrice antisimmetrica del prodotto
+vettoriale e \(\mat{P}^+\) la pseudoinversa di \(\mat{P}\).
+
+\subsection{Derivazione geometrica via trasferimento su piano}
+
+Si consideri un piano \(\pi_\text{ref}\) non passante per nessun centro
+di proiezione.  Il raggio da \(\homo{x}\) nel primo piano immagine
+incontra \(\pi_\text{ref}\) in un punto \(\homo{X}\), che viene poi
+proiettato nel secondo piano come \(\homo{x}'=\mat{H}\homo{x}\),
+dove \(\mat{H}\) è l'omografia indotta da \(\pi_\text{ref}\).
+L'epipolo \(\mathbf{e}'=\mat{P}'\homo{C}\) è il secondo punto noto.
+La retta epipolare è \(l'=\mathbf{e}'\times\mat{H}\homo{x}\),
+da cui~\cite[Sez.~9.2.1]{HZ2004}:
+\[
+  F = [\mathbf{e}']_{\times}\,\mat{H}.
+\]
+Questa derivazione mostra che \(F\) non richiede di conoscere la
+scena 3D: è una proprietà intrinseca della \emph{coppia di camere}.
+
+\subsection{Matrice essenziale e recupero di \texorpdfstring{\(R, t\)}{R, t}}
+
+Nel caso di camere \emph{calibrate} (cioè quando \(\mat{K}\) è nota,
+esattamente ciò che CCalibGA stima), si lavora con le \emph{coordinate
+normalizzate} \(\hat{\homo{x}}=\mat{K}^{-1}\homo{x}\) e
+\(\hat{\homo{x}}'=\mat{K}'^{-1}\homo{x}'\).
+Il vincolo~\eqref{eq:vincolo_ep} diventa:
+\[
+  \hat{\homo{x}}'^T E\,\hat{\homo{x}} = 0,
+\]
+dove la \emph{matrice essenziale} è
+\begin{equation}
+  E = \mat{K}'^T F\,\mat{K},
+  \label{eq:essential}
+\end{equation}
+cioè la versione di \(F\) per camere calibrate~\cite[Sez.~9.6]{HZ2004}.
+\(E\) ha 5 gradi di libertà (3 per \(\mat{R}\), 3 per \(\mathbf{t}\)
+meno 1 per la scala ambigua) e soddisfa il vincolo algebrico
+\(\det E = 0\) con due valori singolari uguali.
+
+La decomposizione SVD \(E=U\operatorname{diag}(1,1,0)V^T\) fornisce
+quattro soluzioni candidate per \((\mat{R},\mathbf{t})\);
+la soluzione corretta è quella per cui i punti triangolati risultano
+davanti a entrambe le camere.
+
+\subsection{Connessione con CCalibGA}
+
+Il risultato della calibrazione di CCalibGA --- la coppia
+\((\mat{K}, \mathbf{k}_r)\) salvata in \texttt{out/ga\_best\_calibration.xml}
+--- è il prerequisito per costruire \(E\) da~\eqref{eq:essential}.
+In un sistema stereoscopico o di ricostruzione 3D, si usa prima
+CCalibGA (o un analogo) per ottenere \(\mat{K}\), poi si sfrutta la
+geometria epipolare per estrarre \(\mat{R}\) e \(\mathbf{t}\) da coppie
+di immagini, ottenendo infine la posizione relativa tra le camere senza
+bisogno di target fisici aggiuntivi.
