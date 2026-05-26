@@ -26,72 +26,25 @@ che agisce linearmente:
 \]
 La scelta di una matrice \(3\times4\) è naturale: il dominio è
 \(\mathbb{P}^3\) (vettori a 4 componenti omogenee) e il codominio è
-\(\mathbb{P}^2\) (vettori a 3 componenti omogenee), quindi \(\mat{P}\)
-deve mandare uno spazio di dimensione 4 in uno di dimensione 3.
+\(\mathbb{P}^2\) (vettori a 3 componenti omogenee).
 Poiché \(\homo{X}\) e \(\homo{x}\) sono definiti a meno di scala,
 anche \(\mat{P}\) è definita a meno di un fattore scalare: le 12
 entrate si riducono a \textbf{11 parametri effettivi}.
-La matrice \(\mat{P}\) ha rango~3 e ammette \emph{inversa sinistra}.
-
-%─────────────────────────────────────────────
-\subsection{Camera con centro nell'origine}
-\label{sub:camera_origine}
-
-Si considera il caso più semplice: il \emph{centro di proiezione}
-\(C\) coincide con l'origine del sistema di riferimento, e il
-\emph{piano immagine} (schermo) è posto alla quota \(Z = f\),
-dove \(f\) è la \emph{distanza focale}.
-
-Un punto generico dello spazio
-\(\homo{X}=(X:Y:Z:1)\) viene proiettato
-sul piano \(Z=f\) lungo la retta passante per \(C=(0:0:0:1)\):
-il punto di intersezione ha coordinate euclidee
-\[
-  x = f\,\frac{X}{Z}, \qquad y = f\,\frac{Y}{Z}.
-\]
-In coordinate omogenee questo si scrive come
-\[
-  \begin{bmatrix}
-    f & 0 & 0 & 0 \\
-    0 & f & 0 & 0 \\
-    0 & 0 & 1 & 0
-  \end{bmatrix}
-  \begin{bmatrix} X \\ Y \\ Z \\ U \end{bmatrix}
-  =
-  \varrho
-  \begin{bmatrix} x \\ y \\ u \end{bmatrix},
-\]
-ovvero \(\mat{P} = \mat{K}\,[\,\mat{I}_3 \mid \vect{0}\,]\) con
-\[
-  \mat{K} =
-  \begin{bmatrix}
-    f & 0 & 0 \\
-    0 & f & 0 \\
-    0 & 0 & 1
-  \end{bmatrix}.
-\]
-Il \emph{punto principale} \(H'\) è il piede dell'asse ottico sul
-piano immagine, ossia la proiezione di \(C\) secondo la direzione
-dell'asse \(Z\); la distanza \(|CH'|=f\) è la distanza focale,
-e l'asse \(Z\) è detto \emph{asse focale}.
 
 %─────────────────────────────────────────────
 \subsection{Matrice intrinseca \(\mat{K}\)}
 \label{sub:matrice_K}
 
-Il piano immagine ha in generale il proprio sistema di riferimento,
-con origine \((x_0, y_0)\) rispetto al sistema della camera e assi
-non necessariamente coincidenti con quelli del sensore.
-Introducendo tale sistema, le coordinate pixel si esprimono come
-\[
-  \tilde{x} = f_1\,\frac{X}{Z} + s\,\frac{Y}{Z} + x_0,
-  \qquad
-  \tilde{y} = f_2\,\frac{Y}{Z} + y_0,
-\]
-dove \(f_1, f_2\) sono le focali espresse in pixel lungo i due assi
-del sensore, \(s\) è il parametro di \emph{skew} (inclinazione
-relativa degli assi), e \((x_0,y_0)\) è il punto principale.
-In forma matriciale omogenea:
+Nel caso più semplice (centro nell'origine, asse ottico lungo \(Z\),
+schermo a quota \(Z=f\)) la proiezione manda \((X,Y,Z)\) nel punto
+schermo \((fX/Z,\, fY/Z)\). In coordinate omogenee questo equivale a
+\(\mat{P} = \mat{K}[\,\mat{I}_3 \mid \vect{0}\,]\) con
+\(\mat{K} = \mathrm{diag}(f,f,1)\).
+
+Nella situazione generale il piano immagine ha il proprio sistema di
+riferimento, con punto principale \((x_0, y_0)\), scale pixel distinte
+\(f_1, f_2\) sui due assi, e un parametro di \emph{skew} \(s\) che
+cattura l'inclinazione relativa degli assi del sensore:
 \[
   \mat{K} =
   \begin{bmatrix}
@@ -100,13 +53,11 @@ In forma matriciale omogenea:
     0   & 0   & 1
   \end{bmatrix}.
 \]
-\(\mat{K}\) è \emph{triangolare superiore} con determinante
-\(\neq 0\), dunque invertibile. I tre vettori colonna di
-\(\mat{K}\) corrispondono a direzioni proiettive e sono linearmente
-indipendenti. I cinque parametri \((f_1, f_2, s, x_0, y_0)\) sono
-detti \textbf{parametri intrinseci}: descrivono la geometria interna
-della camera indipendentemente dalla sua posa nello spazio. Nelle
-camere moderne si assume tipicamente \(s=0\) e \(f_1=f_2=f\).
+\(\mat{K}\) è \emph{triangolare superiore} e invertibile.
+I cinque parametri \((f_1, f_2, s, x_0, y_0)\) sono detti
+\textbf{parametri intrinseci}: descrivono la geometria interna della
+camera indipendentemente dalla sua posa nello spazio. Nelle camere
+moderne si assume tipicamente \(s=0\) e \(f_1=f_2=f\).
 
 %─────────────────────────────────────────────
 \subsection{Parametri estrinseci e camera generale}
@@ -129,48 +80,12 @@ Il passaggio dal sistema di riferimento \emph{camera} al sistema
 dove \(\vect{w}_1,\vect{w}_2,\vect{w}_3\) sono le coordinate
 (nel sistema mondo) dei versori del sistema camera, e
 \(\vect{c}\) è la posizione del centro ottico nel sistema mondo.
-\(\mat{A}\) è ortogonale, dunque invertibile:
-\(\mat{A}^{-1}=\mat{A}^T=\mat{R}\), di conseguenza:
-\[
-  \vect{X} = \mat{R}\,\vect{X}' - \mat{R}\,\vect{c}.
-\]
-Scritta come proiettività (aggiungendo l'ultima riga \((0,0,0,1)\)),
-l'affinità diventa
-\[
-  \begin{bmatrix} \vect{X} \\ 1 \end{bmatrix}
-  =
-  \underbrace{
-  \left[
-  \begin{array}{ccc|c}
-    & \mat{R} & & -\mat{R}\vect{c} \\
-    \hline
-    0 & 0 & 0 & 1
-  \end{array}
-  \right]
-  }_{\text{matrice estrinseca}}
-  \begin{bmatrix} X' \\ Y' \\ Z' \\ 1 \end{bmatrix}.
-\]
+\(\mat{A}\) è ortogonale, dunque \(\mat{A}^{-1}=\mat{A}^T=\mat{R}\),
+e il cambio di coordinate si inverte in
+\(\vect{X} = \mat{R}\,\vect{X}' - \mat{R}\,\vect{c}\).
+
 La \textbf{camera generale} si ottiene componendo la trasformazione
 estrinseca con la proiezione intrinseca:
-\[
-  \left[
-  \begin{array}{c|c}
-    \mat{K} & \begin{matrix} 0 \\ 0 \\ 0 \end{matrix}
-  \end{array}
-  \right]
-  \left[
-  \begin{array}{ccc|c}
-    & \mat{R} & & -\mat{R}\vect{c} \\
-    \hline
-    0 & 0 & 0 & 1
-  \end{array}
-  \right]
-  \begin{bmatrix} X \\ Y \\ Z \\ 1 \end{bmatrix}
-  =
-  \varrho
-  \begin{bmatrix} x \\ y \\ u \end{bmatrix}
-\]
-da cui la forma canonica
 \begin{equation}
   \mat{P} = \mat{K}\mat{R}
   \begin{bmatrix} \mat{I}_3 & -\vect{c} \end{bmatrix}.
@@ -178,9 +93,7 @@ da cui la forma canonica
 \end{equation}
 I \textbf{6 parametri estrinseci} sono: 3 per la rotazione \(\mat{R}\)
 e 3 per la posizione \(\vect{c}\).
-In totale \(\mat{P}\) ha quindi \(5+6=11\) parametri effettivi,
-coerentemente con il grado di libertà della matrice \(3\times4\)
-a meno di scala.
+In totale \(\mat{P}\) ha quindi \(5+6=11\) parametri effettivi.
 
 \begin{oss}
 Nel processo di calibrazione i parametri estrinseci \((\mat{R}_j, \vect{c}_j)\)
@@ -188,37 +101,19 @@ variano per ogni frame \(j\) del pattern acquisito, mentre \(\mat{K}\)
 è condiviso da tutte le viste.
 \end{oss}
 
-\subsection{Piano principale, asse focale e punto principale}
-\label{sub:piano_principale}
-
-Dalla forma~\eqref{eq:P_canonica} si ricava che la terza riga di
-\(\mat{P}\), denotata \(\vect{m}_3^T\), soddisfa
-\[
-  \begin{bmatrix} m_{31} & m_{32} & m_{33} & m_{34} \end{bmatrix}
-  \begin{bmatrix} X \\ Y \\ Z \\ U \end{bmatrix}
-  = 0
-\]
-per i punti del \emph{piano principale} --- il piano che passa per
-\(C\) e che è parallelo al piano immagine. Il punto improprio
-\[
-  \begin{bmatrix} m_{31} \\ m_{32} \\ m_{33} \\ 0 \end{bmatrix}
-\]
-fornisce la \emph{direzione dell'asse focale}, perpendicolare al
-piano immagine. Conoscendo \(\mat{P}\) si ricava quindi la direzione
-dell'asse focale; congiungendo tale direzione con il centro ottico
-\(C\) si ottiene l'intero asse focale, la cui intersezione con il
-piano immagine è il \emph{punto principale} \(H'\).
-
-\begin{oss}[Centro ottico, nucleo e retroproiezione]
-Il centro ottico \(\vect{c}\) è il punto che \(\mat{P}\) manda nel
-vettore nullo (\(\mat{P}\,\homo{C} = \vect{0}\)): fisicamente, è il punto da cui partono
-tutti i raggi di proiezione. Dato un punto immagine
-\(\homo{x}\in\mathbb{P}^2\), l'insieme di tutti i punti 3D che si
-proiettano su di esso forma la \emph{retta di retroproiezione}
+\begin{oss}[Asse focale, piano principale e centro ottico]
+Dalla forma~\eqref{eq:P_canonica}, la terza riga di \(\mat{P}\) definisce
+il \emph{piano principale} (passante per \(C\), parallelo al piano immagine);
+la sua parte spaziale fornisce la direzione dell'\emph{asse focale}, la
+cui intersezione col piano immagine è il \emph{punto principale} \(H'\).
+Il centro ottico \(\vect{c}\) è il nucleo di \(\mat{P}\)
+(\(\mat{P}\homo{C}=\vect{0}\)): il punto da cui partono tutti i raggi
+di proiezione. Dato un punto immagine \(\homo{x}\), l'insieme di tutti
+i punti 3D che vi si proiettano forma la \emph{retta di retroproiezione}
 passante per \(\homo{C}\), calcolabile tramite l'inversa destra
-\(\mat{P}^T(\mat{P}\mat{P}^T)^{-1}\). Questi concetti non sono
-direttamente usati nel pipeline di calibrazione del progetto, ma
-sono fondamentali in applicazioni di ricostruzione 3D e stereo.
+\(\mat{P}^T(\mat{P}\mat{P}^T)^{-1}\). Questi concetti non sono usati
+nel pipeline di calibrazione del progetto, ma sono fondamentali in
+ricostruzione 3D e stereo.
 \end{oss}
 
 %─────────────────────────────────────────────
@@ -261,7 +156,5 @@ costituisce un sistema lineare omogeneo tramite DLT
 (Direct Linear Transform): eliminando il fattore di scala
 \(\varrho_i\) da ciascuna coppia si ottengono 2 equazioni
 lineari negli 11 elementi di \(\mat{P}\). Con \(n \geq 6\) punti
-in posizione generale (nessun gruppo di quattro coplanare,
-nessun gruppo di tre collineare) il sistema è determinato e
-si risolve per SVD. \
+in posizione generale il sistema è determinato e si risolve per SVD.
 \end{oss}

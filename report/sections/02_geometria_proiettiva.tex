@@ -117,22 +117,17 @@ La corrispondenza con \(\mathbb{E}^2\) è dunque:
 \end{figure}
 
 %─────────────────────────────────────────────
-\subsection{Rette in \(\mathbb{P}^2\) e dualità}
+\subsection{Rette in \(\mathbb{P}^2\), dualità e retta all'infinito}
 \label{sub:dualita}
 
-In \(\mathbb{P}^2\) punti e rette sono \emph{duali}: ogni enunciato
-valido scambia la sua verità se si scambiano i ruoli di punti e rette.
-L'intersezione di due rette \(\vect{r}\) e \(\vect{s}\) da luogo
-a un punto (che può essere proprio o improprio);
-analogamente, due punti \(\homo{x}\) e \(\homo{y}\)
-individuano una (unica) retta che li contiene.
 In \(\mathbb{P}^2\) non esiste il parallelismo euclideo: due rette
-distinte si incontrano \emph{sempre} in esattamente un punto,
-che può essere improprio. Rette ``parallele'' nel senso euclideo
-si incontrano nel punto improprio condiviso
-\((\alpha:\beta:0)\) corrispondente alla loro direzione comune.
-L'insieme di tutti i punti impropri del piano forma la
-\emph{retta all'infinito}.
+distinte si incontrano \emph{sempre} in esattamente un punto, che
+può essere improprio. Rette parallele nel senso euclideo si incontrano
+nel punto improprio \((\alpha:\beta:0)\) corrispondente alla loro
+direzione comune; l'insieme di tutti i punti impropri forma la
+\emph{retta all'infinito}. Per dualità, punti e rette hanno ruoli
+simmetrici: due punti determinano univocamente una retta, e due rette
+determinano univocamente un punto (proprio o improprio).
 
 \begin{oss}
 Quando la camera proietta una retta del piano euclideo, il raggio
@@ -156,8 +151,6 @@ Ogni punto dello spazio affine euclideo \((x,y,z)\) vi è immerso come
              + \delta\,\vect{e}_3
 \]
 si fa corrispondere il \emph{punto improprio} \((\alpha:\beta:\delta:0)\).
-Le direzioni di tutte le rette dello spazio affine corrispondono
-quindi a tutti e soli i punti impropri di \(\mathbb{P}^3\).
 In generale, ogni punto di \(\mathbb{P}^3\) è una classe di equivalenza
 \[
   \homo{X} =
@@ -169,49 +162,25 @@ In generale, ogni punto di \(\mathbb{P}^3\) è una classe di equivalenza
 con punto proprio se \(U\neq 0\) (coordinate euclidee
 \((X/U,\,Y/U,\,Z/U)\)) e punto improprio se \(U=0\).
 In \(\mathbb{P}^3\) non sono definiti angoli, distanze o direzioni.
-Le trasformazioni proiettive biunivoche conservano la collinearità e
-tutte le proprietà di incidenza; l'unico invariante \emph{scalare}
-per quattro punti collineari è il \textbf{birapporto}: una proiettività
-lascia tale quantità invariata, e se uno dei quattro punti è improprio
-si riduce al rapporto semplice tra le distanze degli altri tre.
+Le trasformazioni proiettive biunivoche conservano la collinearità;
+l'unico invariante \emph{scalare} per quattro punti collineari è il
+\textbf{birapporto}: una proiettività lascia tale quantità invariata.
+L'unione di tutti i punti impropri costituisce il
+\emph{piano all'infinito}.
 
 \begin{oss}[Birapporto e proiezione prospettica]
 Il birapporto è l'unico invariante scalare della proiezione prospettica:
 quattro punti collineari hanno lo stesso birapporto nel mondo 3D e
-nella loro immagine sul sensore. Questo garantisce coerenza geometrica
-indipendentemente dalla posa della camera;
-questo invariante è alla base della teoria che garantisce che
-l'omografia stimata da quattro corrispondenze sia unica e corretta.
+nella loro immagine sul sensore, indipendentemente dalla posa della
+camera. Questo invariante garantisce che l'omografia stimata da quattro
+corrispondenze sia unica e corretta.
 \end{oss}
-
-L'unione di tutti i punti impropri costituisce il
-\emph{piano all'infinito}, identificato dall'equazione \(\alpha X + \beta Y + \gamma Z + \delta U = 0\).
-
-\paragraph{Immersione di \(\mathbb{P}^2\) in \(\mathbb{P}^3\).}
-Un piano si identifica con \(\mathbb{P}^2\) tramite l'immersione
-\[
-  \homo{P} = \lambda\homo{A} + \mu\homo{B} + \nu\homo{C},
-  \qquad (\lambda:\mu:\nu)\in\mathbb{P}^2,
-\]
-dove \(\homo{A},\homo{B},\homo{C}\in\mathbb{P}^3\) sono tre punti non
-collineari che fungono da base. Le coordinate locali \((\lambda:\mu:\nu)\)
-sono coordinate proiettive bidimensionali; immerse in \(\mathbb{P}^3\)
-diventano coordinate globali a quattro componenti.
 
 La struttura di \(\mathbb{P}^3\) è il contesto in cui si colloca
 la camera: il sensore è un piano immerso nello spazio proiettivo,
 e la proiezione prospettica è una mappa da \(\mathbb{P}^3\) a
 \(\mathbb{P}^2\) descritta dalla matrice \(\mat{P}\), trattata nel
 Capitolo~\ref{sec:modello_camera}.
-
-\begin{comment}
-  \begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth]{images/projective_space_example.jpg}
-    \caption{Didascalia dell'immagine.}
-    \label{fig:etichetta}
-  \end{figure}
-\end{comment}
 
 %─────────────────────────────────────────────
 \subsection{Proiettività e prospettività}
