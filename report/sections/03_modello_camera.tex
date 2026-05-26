@@ -1,231 +1,304 @@
 \section{Modello della Camera Proiettiva}
 \label{sec:modello_camera}
 
-\subsection{Costruzione geometrica della proiezione centrale}
-\label{sub:costruzione_geom}
+%─────────────────────────────────────────────
+\subsection{La matrice di proiezione \(\mat{P}\)}
+\label{sub:matrice_P}
 
-Si considera un punto \(P\) dello spazio affine tridimensionale e si
-vuole determinarne l'immagine sul piano \(\pi\), avente normale
-\(\mathbf{n}=(a,b,c)^T\) e passante per \(P_0\). In coordinate affini
-la sua equazione è
+Consideriamo lo spazio affine \(\mathbb{E}^3\) immerso nella sua chiusura
+proiettiva \(\mathbb{P}^3\): ogni punto euclideo \((X,Y,Z)\) diventa
+il punto proiettivo proprio \((X:Y:Z:1)\), e le direzioni delle rette
+diventano punti impropri \((\alpha:\beta:\delta:0)\). Su questo spazio
+si vuole definire una \emph{proiezione} verso un piano bidimensionale
+--- il piano immagine --- anch'esso immerso in \(\mathbb{P}^2\).
+
+La proiezione è regolata da una matrice \(\mat{P}\in\mathbb{R}^{3\times4}\)
+che agisce linearmente:
 \[
-  a(x-x_0)+b(y-y_0)+c(z-z_0)=0,
-  \qquad\text{ovvero}\quad
-  \boldsymbol{\pi}^T\homo{X}=0,
+  \mat{P}\,\homo{X} = \varrho\,\homo{x},
+  \qquad
+  \homo{X} =
+  \begin{bmatrix} X \\ Y \\ Z \\ U \end{bmatrix} \in \mathbb{P}^3,
+  \quad
+  \homo{x} =
+  \begin{bmatrix} x \\ y \\ u \end{bmatrix} \in \mathbb{P}^2,
+  \quad \varrho \neq 0.
 \]
-dove \(\boldsymbol{\pi}=(a,b,c,d)^T\) con \(d=-(ax_0+by_0+cz_0)\) è
-la forma proiettiva del piano.  Il \emph{centro di proiezione} (occhio)
-è \(E\), ipotizzato esterno a \(\pi\).
+La scelta di una matrice \(3\times4\) è naturale: il dominio è
+\(\mathbb{P}^3\) (vettori a 4 componenti omogenee) e il codominio è
+\(\mathbb{P}^2\) (vettori a 3 componenti omogenee), quindi \(\mat{P}\)
+deve mandare uno spazio di dimensione 4 in uno di dimensione 3.
+Poiché \(\homo{X}\) e \(\homo{x}\) sono definiti a meno di scala,
+anche \(\mat{P}\) è definita a meno di un fattore scalare: le 12
+entrate si riducono a \textbf{11 parametri effettivi}.
+La matrice \(\mat{P}\) ha rango~3 e ammette \emph{inversa sinistra}.
 
-La retta \(EP\) si \emph{parametrizza} in coordinate omogenee come
+%─────────────────────────────────────────────
+\subsection{Camera con centro nell'origine}
+\label{sub:camera_origine}
+
+Si considera il caso più semplice: il \emph{centro di proiezione}
+\(C\) coincide con l'origine del sistema di riferimento, e il
+\emph{piano immagine} (schermo) è posto alla quota \(Z = f\),
+dove \(f\) è la \emph{distanza focale}.
+
+Un punto generico dello spazio
+\(\homo{X}=(X:Y:Z:1)\) viene proiettato
+sul piano \(Z=f\) lungo la retta passante per \(C=(0:0:0:1)\):
+il punto di intersezione ha coordinate euclidee
 \[
-  \homo{Q}(T) = (1-T)\,\homo{E} + T\,\homo{P}, \qquad T\in\mathbb{R}.
+  x = f\,\frac{X}{Z}, \qquad y = f\,\frac{Y}{Z}.
 \]
-Imponendo che \(\homo{Q}(T^*)\) appartenga al piano,
-\(\boldsymbol{\pi}^T\homo{Q}(T^*)=0\), si ottiene
+In coordinate omogenee questo si scrive come
 \[
-  (1-T^*)\,\boldsymbol{\pi}^T\homo{E}
-  + T^*\,\boldsymbol{\pi}^T\homo{P} = 0
-  \implies
-  T^* = \frac{\boldsymbol{\pi}^T\homo{E}}
-             {\boldsymbol{\pi}^T\homo{E}-\boldsymbol{\pi}^T\homo{P}}.
+  \begin{bmatrix}
+    f & 0 & 0 & 0 \\
+    0 & f & 0 & 0 \\
+    0 & 0 & 1 & 0
+  \end{bmatrix}
+  \begin{bmatrix} X \\ Y \\ Z \\ U \end{bmatrix}
+  =
+  \varrho
+  \begin{bmatrix} x \\ y \\ u \end{bmatrix},
 \]
-Sostituendo si ottiene
-\begin{equation}
-  \homo{Q}^* =
-  \bigl(\boldsymbol{\pi}^T\homo{P}\bigr)\,\homo{E}
-  -\bigl(\boldsymbol{\pi}^T\homo{E}\bigr)\,\homo{P}.
-  \label{eq:proiezione_geom}
-\end{equation}
-Questa espressione è \emph{lineare} in \(\homo{P}\): il punto
-proiettato è una combinazione lineare di \(\homo{E}\) e di \(\homo{P}\)
-con coefficienti che dipendono solo da \(\boldsymbol{\pi}\) e da \(E\).
-La struttura matriciale della proiezione emerge quindi naturalmente.
-
-\begin{figure}[H]
-\centering
-\begin{tikzpicture}[scale=1.05, >=Stealth,
-  plane/.style={draw=gray!60, fill=gray!10, opacity=0.8},
-  arr/.style={->, thick, blue!70!black}]
-
-  % Piano pi
-  \draw[plane] (-1.5,-0.8) -- (1.5,-0.8)
-               -- (2.5,0.5) -- (-0.5,0.5) -- cycle;
-  \node[below right, gray] at (2.2,0.5) {\small Piano \(\pi\)};
-  \node[circle, fill=gray!60, inner sep=1.5pt,
-        label=below:{\small\(P_0\)}] at (0.5,-0.15) {};
-
-  % Punto P dello spazio
-  \node[circle, fill=blue!60, inner sep=2pt] (P) at (4.0,2.2) {};
-  \node[above, blue!70!black] at (P) {\small\(P\)};
-
-  % Centro di proiezione E
-  \node[circle, fill=red!70, inner sep=2.5pt,
-        label=above:{\small\(E\)}] (E) at (-1.8,1.6) {};
-
-  % Retta EP
-  \draw[-, dashed, gray!60] (E) -- (P);
-
-  % Punto proiettato Q*
-  \node[circle, fill=red!40, inner sep=2pt] (Q) at (0.7,0.2) {};
-  \node[below right, red!60!black] at (Q) {\small\(Q^*=\homo{Q}(T^*)\)};
-  \draw[arr] (E) -- (Q);
-  \draw[-,dashed,blue!40] (Q) -- (P);
-
-  % Freccia T*
-  \draw[<->, gray, very thin] (E.south) -- (Q.west)
-        node[midway, below, font=\scriptsize, gray] {\(T^*\)};
-\end{tikzpicture}
-\caption{Costruzione geometrica della proiezione centrale: la retta
-\(EP\) parametrizzata in \(T\) interseca \(\pi\) nel punto
-\(Q^*=\homo{Q}(T^*)\).}
-\label{fig:costruzione_EP}
-\end{figure}
-
-\subsection{Dalla proiezione 3D alla matrice \texorpdfstring{\(4\times4\)}{4x4}}
-\label{sub:matrice4x4}
-
-Scritti i quattro vettori colonna nella posizione naturale,
-l'equazione~\eqref{eq:proiezione_geom} si riscrive come prodotto
-matriciale:
-\[
-  \homo{Q}^*
-  = \underbrace{\bigl(
-      \homo{E}\,\boldsymbol{\pi}^T
-      - (\boldsymbol{\pi}^T\homo{E})\,I_4
-    \bigr)}_{M_{4\times4}}\homo{P}.
-\]
-La matrice \(M_{4\times4}\) è quella che agisce sullo spazio
-proiettivo \(\mathbb{P}^3\) intero e \emph{schiaccia} ogni punto su
-\(\pi\): per costruzione \(\operatorname{rank}(M)=3\) (non è
-invertibile, come ci si aspetta da una proiezione).  Ogni punto della
-retta \(EP\) viene mandato in \(Q^*\): la fibra della trasformazione
-è la retta stessa, il che conferma che \(M\) descrive correttamente
-la proiezione prospettica.
-
-\subsection{Sistema di riferimento del piano immagine
-            e passaggio alla matrice \texorpdfstring{\(3\times4\)}{3x4}}
-\label{sub:piano_immagine}
-
-Il punto \(Q^*\) è ancora espresso in coordinate omogenee
-dello \emph{spazio}.  Per ottenere le coordinate \emph{schermo}
-\((u,v)\) si introduce un sistema di riferimento del piano \(\pi\):
-\begin{itemize}
-  \item \(P_0\): origine del piano immagine (punto principale proiettato);
-  \item \(\mathbf{w}_1, \mathbf{w}_2\): due versori contenuti in \(\pi\),
-        ortogonali fra loro e con \(\mathbf{n}=(a,b,c)^T\), in modo che
-        la terna \((\mathbf{w}_1,\mathbf{w}_2,\mathbf{n})\) sia ortonormale.
-\end{itemize}
-Le coordinate schermo si ricavano proiettando \(Q^*-P_0\) lungo i
-versori:
-\[
-  u = \mathbf{w}_1^T(Q^*-P_0), \qquad v = \mathbf{w}_2^T(Q^*-P_0).
-\]
-Questo passaggio è precisamente quello codificato dalla matrice
-intrinseca \(\mat{K}\):
-\begin{itemize}
-  \item \(f_x, f_y\): scala di \(\mathbf{w}_1,\mathbf{w}_2\) da unità
-        fisiche a pixel lungo i rispettivi assi;
-  \item \((c_x,c_y)\): offset dell'origine \(P_0\) rispetto
-        all'angolo del sensore;
-  \item \(s\) (skew): inclinazione di \(\mathbf{w}_1\) rispetto
-        all'asse orizzontale del sensore (zero per sensori moderni).
-\end{itemize}
-Il risultato finale è quindi la\emph{camera matrix} \(3\times4\),
-composizione della proiezione \(M_{4\times4}\) con il cambio di
-base del piano:
-\[
-  \lambda\,\homo{x} = \mat{P}\,\homo{X},
-  \qquad \mat{P}\in\mathbb{R}^{3\times4}.
-  \label{eq:modello_camera}
-\]
-
-\begin{figure}[H]
-\centering
-\begin{tikzpicture}[>=Stealth, scale=1.1]
-  \node[circle, fill=black!80, inner sep=2.5pt,
-        label=left:{\small\(E\)}] (C) at (0,0) {};
-
-  \draw[thick, orange!70!black] (2.5,-1.5) -- (2.5,1.5);
-  \node[right, orange!70!black] at (2.55,1.5)
-        {\small piano \(\pi\)};
-
-  \draw[->, gray, dashed] (C) -- (4.5,0)
-        node[right]{\small asse \(Z\) (ottico)};
-
-  % w1, w2 sul piano
-  \draw[->, thick, green!60!black] (2.5,0) -- (2.5,0.9)
-        node[right, font=\small]{\(\mathbf{w}_2\) (\(v\))};
-  \draw[->, thick, teal] (2.5,0) -- (3.2,0)
-        node[below, font=\small]{\(\mathbf{w}_1\) (\(u\))};
-  \node[circle, fill=gray!60, inner sep=1.5pt,
-        label=below:{\small\(P_0\) ($c_x,c_y$)}] at (2.5,0) {};
-
-  \node[circle, fill=blue!60, inner sep=2pt] (X) at (4.0,1.1) {};
-  \node[above, blue!70!black] at (4.0,1.1) {\small\(\homo{X}\)};
-  \draw[-, blue!40] (C) -- (X);
-  \draw[dashed, blue!40] (X) -- (2.5,0.69);
-  \node[circle, fill=red!70, inner sep=2pt] at (2.5,0.69) {};
-  \node[right, red!70!black] at (2.5,0.69) {\small\(\homo{x}=(u,v)\)};
-  \draw[<->, gray] (0,-1.7) -- (2.5,-1.7)
-        node[midway, below] {\small\(f\)};
-\end{tikzpicture}
-\caption{Piano immagine con sistema di riferimento \((P_0,\mathbf{w}_1,
-\mathbf{w}_2)\). Il punto principale \(P_0=(c_x,c_y)\) è il piede
-dell'asse ottico; \(f_x,f_y\) scalano le unità fisiche in pixel~\cite[Cap.~6]{HZ2004}.}
-\label{fig:pinhole}
-\end{figure}
-
-\subsection{Decomposizione canonica di \texorpdfstring{\(\mat{P}\)}{P}}
-
-La \emph{anatomia} della camera proiettiva è la decomposizione
-\[
-  \mat{P} = \mat{K}\bigl[\mat{R}\mid-\mat{R}\mat{C}\bigr],
-  \label{eq:decomp_P}
-\]
-dove \(\mat{K}\) è la matrice intrinseca triangolare superiore,
-\(\mat{R}\in SO(3)\) la rotazione dal sistema del mondo a quello
-camera, e \(\mat{C}\in\mathbb{R}^3\) il centro ottico in coordinate
-mondo~\cite[Sez.~6.2]{HZ2004}.
-
-\subsection{Matrice intrinseca}
-
+ovvero \(\mat{P} = \mat{K}\,[\,\mat{I}_3 \mid \vect{0}\,]\) con
 \[
   \mat{K} =
-  \begin{pmatrix}
-    f_x & s   & c_x \\
-    0   & f_y & c_y \\
-    0   & 0   & 1
-  \end{pmatrix},
+  \begin{bmatrix}
+    f & 0 & 0 \\
+    0 & f & 0 \\
+    0 & 0 & 1
+  \end{bmatrix}.
 \]
-dove \(f_x = f/d_x\) e \(f_y = f/d_y\) sono le focali in pixel
-(\(d_x, d_y\) dimensioni fisiche del pixel), \(s\) lo skew e
-\((c_x,c_y)\) il punto principale, tutti motivati geometricamente
-come illustrato nella Sezione~\ref{sub:piano_immagine}~\cite[Sez.~6.2]{HZ2004}.
+Il \emph{punto principale} \(H'\) è il piede dell'asse ottico sul
+piano immagine, ossia la proiezione di \(C\) secondo la direzione
+dell'asse \(Z\); la distanza \(|CH'|=f\) è la distanza focale,
+e l'asse \(Z\) è detto \emph{asse focale}.
 
-\subsection{Stima diretta di \texorpdfstring{\(\mat{P}\)}{P} da corrispondenze generali}
-\label{sub:stima_P_diretta}
+%─────────────────────────────────────────────
+\subsection{Matrice intrinseca \(\mat{K}\)}
+\label{sub:matrice_K}
 
-Nel caso generale (punti 3D non planari), dati \(n\geq 6\) punti
-corrispondenti \(\homo{X}_i \leftrightarrow \homo{x}_i\), la
-condizione \(\homo{x}_i \times \mat{P}\homo{X}_i=0\) genera per
-ogni coppia due equazioni lineari nei dodici elementi di \(\mat{P}\).
-L'intero sistema ha \(2n\) equazioni in 11 incognite effettive
-(la scala è libera): si risolve per DLT/SVD come per l'omografia.
+Il piano immagine ha in generale il proprio sistema di riferimento,
+con origine \((x_0, y_0)\) rispetto al sistema della camera e assi
+non necessariamente coincidenti con quelli del sensore.
+Introducendo tale sistema, le coordinate pixel si esprimono come
+\[
+  \tilde{x} = f_1\,\frac{X}{Z} + s\,\frac{Y}{Z} + x_0,
+  \qquad
+  \tilde{y} = f_2\,\frac{Y}{Z} + y_0,
+\]
+dove \(f_1, f_2\) sono le focali espresse in pixel lungo i due assi
+del sensore, \(s\) è il parametro di \emph{skew} (inclinazione
+relativa degli assi), e \((x_0,y_0)\) è il punto principale.
+In forma matriciale omogenea:
+\[
+  \mat{K} =
+  \begin{bmatrix}
+    f_1 & s   & x_0 \\
+    0   & f_2 & y_0 \\
+    0   & 0   & 1
+  \end{bmatrix}.
+\]
+\(\mat{K}\) è \emph{triangolare superiore} con determinante
+\(\neq 0\), dunque invertibile. I tre vettori colonna di
+\(\mat{K}\) corrispondono a direzioni proiettive e sono linearmente
+indipendenti. I cinque parametri \((f_1, f_2, s, x_0, y_0)\) sono
+detti \textbf{parametri intrinseci}: descrivono la geometria interna
+della camera indipendentemente dalla sua posa nello spazio. Nelle
+camere moderne si assume tipicamente \(s=0\) e \(f_1=f_2=f\).
+
+%─────────────────────────────────────────────
+\subsection{Parametri estrinseci e camera generale}
+\label{sub:parametri_estrinseci}
+
+Nella situazione generale la camera è posizionata in modo arbitrario
+nello spazio: il suo centro ottico si trova in \(\vect{c}\in\mathbb{E}^3\)
+e il suo sistema di riferimento è ruotato rispetto al sistema del mondo.
+
+Il passaggio dal sistema di riferimento \emph{camera} al sistema
+\emph{mondo} è un'affinità \(\alpha\):
+\[
+  \alpha: \vect{X}' \longmapsto \mat{A}\vect{X}' + \vect{c},
+  \qquad
+  \mat{A} =
+  \begin{bmatrix}
+    \vect{w}_1 & \vect{w}_2 & \vect{w}_3
+  \end{bmatrix},
+\]
+dove \(\vect{w}_1,\vect{w}_2,\vect{w}_3\) sono le coordinate
+(nel sistema mondo) dei versori del sistema camera, e
+\(\vect{c}\) è la posizione del centro ottico nel sistema mondo.
+\(\mat{A}\) è ortogonale, dunque invertibile:
+\(\mat{A}^{-1}=\mat{A}^T=\mat{R}\), di conseguenza:
+\[
+  \vect{X} = \mat{R}\,\vect{X}' - \mat{R}\,\vect{c}.
+\]
+Scritta come proiettività (aggiungendo l'ultima riga \((0,0,0,1)\)),
+l'affinità diventa
+\[
+  \begin{bmatrix} \vect{X} \\ 1 \end{bmatrix}
+  =
+  \underbrace{
+  \left[
+  \begin{array}{ccc|c}
+    & \mat{R} & & -\mat{R}\vect{c} \\
+    \hline
+    0 & 0 & 0 & 1
+  \end{array}
+  \right]
+  }_{\text{matrice estrinseca}}
+  \begin{bmatrix} X' \\ Y' \\ Z' \\ 1 \end{bmatrix}.
+\]
+La \textbf{camera generale} si ottiene componendo la trasformazione
+estrinseca con la proiezione intrinseca:
+\[
+  \left[
+  \begin{array}{c|c}
+    \mat{K} & \begin{matrix} 0 \\ 0 \\ 0 \end{matrix}
+  \end{array}
+  \right]
+  \left[
+  \begin{array}{ccc|c}
+    & \mat{R} & & -\mat{R}\vect{c} \\
+    \hline
+    0 & 0 & 0 & 1
+  \end{array}
+  \right]
+  \begin{bmatrix} X \\ Y \\ Z \\ 1 \end{bmatrix}
+  =
+  \varrho
+  \begin{bmatrix} x \\ y \\ u \end{bmatrix}
+\]
+da cui la forma canonica
+\begin{equation}
+  \mat{P} = \mat{K}\mat{R}
+  \begin{bmatrix} \mat{I}_3 & -\vect{c} \end{bmatrix}.
+  \label{eq:P_canonica}
+\end{equation}
+I \textbf{6 parametri estrinseci} sono: 3 per la rotazione \(\mat{R}\)
+e 3 per la posizione \(\vect{c}\).
+In totale \(\mat{P}\) ha quindi \(5+6=11\) parametri effettivi,
+coerentemente con il grado di libertà della matrice \(3\times4\)
+a meno di scala.
 
 \begin{oss}
-CCalibGA usa un pattern \emph{planare}, per cui tutte le corrispondenze
-hanno \(Z=0\) e il problema si riduce alla stima di omografie \(\mat{H}_j\)
-(una per vista), che è numericamente più stabile e richiede meno punti
-per vista~\cite[Sez.~7.1]{HZ2004}.
+Nel processo di calibrazione i parametri estrinseci \((\mat{R}_j, \vect{c}_j)\)
+variano per ogni frame \(j\) del pattern acquisito, mentre \(\mat{K}\)
+è condiviso da tutte le viste.
 \end{oss}
 
-\subsection{Retroproiezione e pseudoinversa}
+\subsection{Piano principale, asse focale e punto principale}
+\label{sub:piano_principale}
 
-Dato \(\homo{x}\), l'insieme dei punti 3D compatibili è il raggio
-retroproiettato. Il punto di norma minima su tale raggio è
+Dalla forma~\eqref{eq:P_canonica} si ricava che la terza riga di
+\(\mat{P}\), denotata \(\vect{m}_3^T\), soddisfa
 \[
-  \homo{X}_0 = \mat{P}^+\homo{x},
+  \begin{bmatrix} m_{31} & m_{32} & m_{33} & m_{34} \end{bmatrix}
+  \begin{bmatrix} X \\ Y \\ Z \\ U \end{bmatrix}
+  = 0
 \]
-dove \(\mat{P}^+ = \mat{P}^T(\mat{P}\mat{P}^T)^{-1}\) è la
-pseudoinversa destra~\cite[Eq.~6.14]{HZ2004}.
+per i punti del \emph{piano principale} --- il piano che passa per
+\(C\) e che è parallelo al piano immagine. Il punto improprio
+\[
+  \begin{bmatrix} m_{31} \\ m_{32} \\ m_{33} \\ 0 \end{bmatrix}
+\]
+fornisce la \emph{direzione dell'asse focale}, perpendicolare al
+piano immagine. Conoscendo \(\mat{P}\) si ricava quindi la direzione
+dell'asse focale; congiungendo tale direzione con il centro ottico
+\(C\) si ottiene l'intero asse focale, la cui intersezione con il
+piano immagine è il \emph{punto principale} \(H'\).
+
+%─────────────────────────────────────────────
+\subsection{Centro ottico e nucleo di \(\mat{P}\)}
+\label{sub:centro_ottico}
+
+Il centro ottico \(\vect{c}\) è l'unico punto dello spazio
+proiettivo proprio tale che
+\[
+  \mat{P}\,\homo{C} = \vect{0}.
+\]
+È il nucleo di \(\mat{P}\): si trova intersecando le tre famiglie
+di piani definite dalle righe di \(\mat{P}\) in forma cartesiana e
+risolvendo il sistema lineare omogeneo risultante.
+
+%─────────────────────────────────────────────
+\subsection{Retroproiezione e pseudoinversa}
+\label{sub:retroproiezione}
+
+Dato un punto immagine \(\homo{x}\in\mathbb{P}^2\), si vuole trovare
+un punto \(\homo{\hat{X}}\in\mathbb{P}^3\) che si proietti su di esso.
+Il punto \(\homo{x}\) è noto; \(\mat{P}\) è nota; si cerca
+\(\homo{\hat{X}}\) tale che \(\mat{P}\,\homo{\hat{X}} \sim \homo{x}\).
+
+Si osserva che \(\mat{P}^T\) è una matrice \(4\times3\) di rango~3
+e ammette quindi \emph{inversa sinistra} \((\mat{P}^T)^+\), con
+\[
+  (\mat{P}^T)^+\,\mat{P}^T = \mat{I}_3.
+\]
+Prendendo la trasposta di entrambi i membri si definisce
+\(\widehat{\mat{P}} = \bigl[(\mat{P}^T)^+\bigr]^T\), che
+esplicitamente vale
+\[
+  \widehat{\mat{P}} = \mat{P}^T(\mat{P}\mat{P}^T)^{-1},
+\]
+ed è l'\emph{inversa destra} di \(\mat{P}\):
+\[
+  \mat{P}\,\widehat{\mat{P}} = \mat{I}_3.
+\]
+Il punto
+\[
+  \homo{\hat{X}} = \widehat{\mat{P}}\,\homo{x}
+\]
+si proietta esattamente su \(\homo{x}\), poiché
+\[
+  \mat{P}\,\homo{\hat{X}}
+  = \mat{P}\,\widehat{\mat{P}}\,\homo{x}
+  = \mat{I}_3\,\homo{x}
+  = \homo{x}.
+\]
+L'insieme di tutti i punti compatibili con \(\homo{x}\) forma la
+\emph{retta di retroproiezione}
+\[
+  \homo{\hat{X}} + \lambda\,\homo{C}, \qquad \lambda\in\mathbb{R},
+\]
+dove \(\homo{C}\) è il nucleo di \(\mat{P}\).
+
+%─────────────────────────────────────────────
+\subsection{Stima di \(\mat{P}\) da corrispondenze}
+\label{sub:stima_P}
+
+Date \(n\) corrispondenze note \(\homo{X}_i \leftrightarrow \homo{x}_i\),
+si impone la relazione di proiezione per ciascuna coppia:
+\[
+  \mat{P}
+  \begin{bmatrix} X_i \\ Y_i \\ Z_i \\ U_i \end{bmatrix}
+  = \varrho_i
+  \begin{bmatrix} x_i \\ y_i \\ u_i \end{bmatrix}.
+\]
+Denotando con \(\vect{m}_1, \vect{m}_2, \vect{m}_3\) le righe
+di \(\mat{P}\), il sistema diventa
+\[
+  \begin{cases}
+    \vect{m}_1 \homo{X}_i = \varrho_i\, x_i \\[4pt]
+    \vect{m}_2 \homo{X}_i = \varrho_i\, y_i \\[4pt]
+    \vect{m}_3 \homo{X}_i = \varrho_i\, u_i
+  \end{cases}
+\]
+Eliminando \(\varrho_i\) dividendo le prime due equazioni per la
+terza si ottengono \textbf{due relazioni lineari} nei coefficienti
+\(m_{ij}\) per ogni punto.
+Con \(n=6\) punti si ottengono 12 equazioni in 12 incognite
+(gli elementi di \(\mat{P}\)), riducibili a 11 imponendo \(m_{11}=1\)
+per fissare la scala. Una stima robusta si ottiene per DLT/SVD,
+risolvendo il sistema sovradeterminato in senso dei minimi quadrati.
+I punti devono essere in \emph{posizione generale}: nessun gruppo di
+quattro coplanare e nessun gruppo di tre collineare.
+
+\begin{oss}
+Nel progetto i punti dello spazio hanno sempre \(Z=0\) (il pattern è
+planare), per cui la terza colonna di \(\mat{P}\) è ridondante e il
+problema si riduce alla stima di omografie \(\mat{M}_j\) (\(3\times3\)).
+Questo è numericamente più stabile e richiede soli 4 punti per vista
+anziché 6.
+\end{oss}

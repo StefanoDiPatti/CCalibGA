@@ -1,16 +1,14 @@
 \documentclass[12pt,a4paper]{article}
 
-
 %% Encoding & language
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[italian]{babel}
-
+\usepackage{comment}
 
 %% Math
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{mathtools}
-
 
 %% Layout
 \usepackage{geometry}
@@ -18,86 +16,84 @@
 \usepackage{setspace}
 \onehalfspacing
 
-
 %% Graphics & figures
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{caption}
 \usepackage{subcaption}
 
-
 %% TikZ
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,calc,positioning,fit,shapes.geometric}
-
 
 %% Tables
 \usepackage{booktabs}
 \usepackage{array}
 
-
 %% Hyperlinks
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
 \hypersetup{
-  colorlinks=true,
-  linkcolor=blue!60!black,
   citecolor=green!50!black,
   urlcolor=blue!70!black,
-  pdftitle={CCalibGA -- Calibrazione con Pattern Custom e Algoritmi Genetici},
+  pdftitle={CustomCalibGA -- Calibrazione con Pattern Custom e Algoritmi Genetici},
   pdfauthor={Stefano Di Patti}
 }
-
 
 %% Misc
 \usepackage{xcolor}
 \usepackage{microtype}
 \usepackage{enumitem}
 
-
 %% Theorem environments
 \newtheorem{defn}{Definizione}[section]
 \newtheorem{prop}[defn]{Proposizione}
 \newtheorem{oss}[defn]{Osservazione}
 
-
 %% Shortcuts
-\newcommand{\homo}[1]{\tilde{\mathbf{#1}}}
-\newcommand{\mat}[1]{\mathbf{#1}}
-\newcommand{\vect}[1]{\mathbf{#1}}
+\newcommand{\homo}[1]{\mathbf{#1}}        % vettore omogeneo: X bold
+\newcommand{\mat}[1]{\boldsymbol{#1}}     % matrice: K bold italic
+\newcommand{\vect}[1]{\underline{\mathbf{#1}}} % vettore euclideo: c bold sottolineato
 \newcommand{\norm}[1]{\left\|#1\right\|}
-
-
-\title{%
-  \textbf{CCalibGA}\\[0.4em]
-  \large Calibrazione con Pattern Custom e Algoritmi Genetici\\[1em]
-  \normalsize Relazione di Progetto --- Geometria Computazionale
-}
-\author{Stefano Di Patti\\
-  \small Università degli Studi di Milano}
-\date{Anno scolastico 2025/2026}
 
 
 \begin{document}
 
+\begin{titlepage}
+\centering
+\vspace*{3cm}
 
-\maketitle
+{\LARGE\bfseries Calibrazione con Pattern Custom e Algoritmi Genetici\par}
+\vspace{0.6em}
+{\normalsize Relazione di Progetto --- Geometria Computazionale\par}
+
+\vspace{1.5cm}
+
+\includegraphics[height=3cm]{images/minerva.pdf}\par
+
+\vspace{1.5cm}
+
+{\large Stefano Di Patti - 09637A\par}
+\vspace{0.4em}
+{\small Università degli Studi di Milano\par}
+
+\vfill
+
+{\normalsize Anno scolastico 2025/2026\par}
+\end{titlepage}
+
+\clearpage
 \tableofcontents
-\newpage
-
+\clearpage
 
 \input{sections/01_introduzione}
 \input{sections/02_geometria_proiettiva}
 \input{sections/03_modello_camera}
 \input{sections/04_omografia_calibrazione}
-\input{sections/05_distorsione_reproj}
-\input{sections/06_pattern_custom}
-\input{sections/07_algoritmo_genetico}
-\input{sections/08_risultati}
-\input{sections/10_riferimento_affine_rettifica}
+\input{sections/05_golden_rule}
+\input{sections/06_risultati}
 
-
+\nocite{*}
 \bibliographystyle{plain}
 \bibliography{references}
-
 
 \end{document}

@@ -1,0 +1,137 @@
+\section{Reprojection Error e Golden Rule}
+\label{sec:golden_rule}
+
+%─────────────────────────────────────────────
+\subsection{Reprojection error}
+\label{sub:reproj}
+
+Una volta stimati \(\mat{K}\), \(\mathbf{k}_r=(k_1,k_2,p_1,p_2,k_3)\)
+e gli estrinseci \(\{[\mat{R}_j|\mathbf{t}_j]\}\), la qualità della
+calibrazione si misura con il \emph{reprojection error} medio:
+\[
+  \epsilon_{\mathrm{RMSE}}
+  =\sqrt{\frac{1}{N}\sum_{j=1}^{n}\sum_{i=1}^{m_j}
+          \bigl\|\homo{x}_{ji}-\hat{\homo{x}}_{ji}\bigr\|^2},
+\]
+dove \(\hat{\homo{x}}_{ji}=\pi\!\left(\mat{K}[\mat{R}_j|\mathbf{t}_j]
+\homo{X}_i,\mathbf{k}_r\right)\) è la riproiezione del punto 3D.
+
+%─────────────────────────────────────────────
+\subsection{La regola aurea: proiezione su una varietà}
+\label{sub:golden_rule}
+
+I parametri stimati nella fase lineare definiscono un punto
+\(\hat\theta\) nello spazio dei parametri, ma i dati misurati con
+rumore producono un sistema \emph{inconsistente}: non esiste un
+\(\theta\) che soddisfi esattamente tutte le equazioni.
+La \emph{Gold Standard algorithm} afferma che la soluzione ottimale non
+è quella che azzera le equazioni algebriche, ma quella che minimizza la
+\textbf{distanza geometrica} tra i punti misurati \(\tilde{P}\) e la
+superficie \(V\) delle configurazioni ammissibili:
+\[
+  \hat{\theta}^* = \arg\min_{\theta}\sum_i
+  d\!\bigl(\tilde{P}_i,\,V(\theta)\bigr)^2.
+\]
+Geometricamente, il punto ottimo \(P_0\in V\) è il punto della
+superficie più vicino a \(\tilde{P}\): la distanza minima si raggiunge
+quando il vettore \((\tilde{P}-P_0)\) è ortogonale al piano tangente
+a \(V\) in \(P_0\), ovvero quando
+\[
+  \nabla f(P_0)^T(\tilde{P}-P_0) = 0.
+\]
+Il gradiente \(\nabla f(P_0)\) individua la direzione normale alla
+superficie nel punto di minima distanza.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[>=Stealth, scale=1.3]
+
+  % ── Etichetta spazio dei parametri (spostata a sinistra) ─────
+  \node[font=\small, gray!50!black] at (-2.55, 1.1)
+    {spazio dei parametri \(\theta\)};
+
+  % ── Superficie V (curva) ─────────────────────────────────────
+  \draw[blue!70!black, very thick, domain=-1.6:2.4, smooth, samples=60]
+    plot (\x, {0.18*\x*\x - 0.12*\x - 0.5})
+    node[right, font=\small] {\(V(\theta)\)};
+
+  % ── Punto P0 sulla superficie ────────────────────────────────
+  \coordinate (P0) at (0.8, -0.4808);
+  \fill[blue!80!black] (P0) circle (2.2pt);
+  \node[below right, font=\small, blue!80!black] at (P0) {\(P_0\)};
+
+  % ── Punto misurato P tilde ───────────────────────────────────
+  \coordinate (Pt) at (1.55, 0.95);
+  \fill[red!80!black] (Pt) circle (2.2pt);
+  \node[above right, font=\small, red!80!black] at (Pt)
+    {\(\tilde{P}\)};
+
+  % ── Distanza geometrica (perpendicolare) ─────────────────────
+  \draw[red!70!black, dashed, thick] (Pt) -- (P0)
+    node[midway, right, font=\small, red!60!black]
+    {\(d(\tilde{P},V)\)};
+
+  % ── Piano tangente in P0 ─────────────────────────────────────
+  \draw[green!50!black, thick]
+    ($(P0) + (-1.1, -0.185)$) -- ($(P0) + (1.1, 0.185)$)
+    node[right, font=\small, green!40!black] {\small tangente};
+
+  % ── Gradiente in P0 ──────────────────────────────────────────
+  \draw[->, orange!80!black, very thick]
+    (P0) -- ($(P0) + (-0.25, 1.48)$)
+    node[left, font=\small, orange!70!black]
+    {\(\nabla f(P_0)\)};
+
+  % ── Angolo retto ─────────────────────────────────────────────
+  \draw[gray!60]
+    ($(P0) + (0.10, 0.60)$) --
+    ($(P0) + (0.00, 0.617)$) --
+    ($(P0) + (-0.00, 0.017)$);
+
+\end{tikzpicture}
+\caption{Regola aurea: il punto ottimo \(P_0\in V(\theta)\) è il punto
+         della superficie ammissibile più vicino a \(\tilde{P}\). Il
+         vettore \((\tilde{P}-P_0)\) è ortogonale al piano tangente,
+         ovvero parallelo al gradiente \(\nabla f(P_0)\).}
+\label{fig:golden_rule}
+\end{figure}
+
+%─────────────────────────────────────────────
+\subsection{Applicazione al progetto: DLT, SVD e LM}
+\label{sub:pipeline_calibrazione}
+
+Il problema della regola d'oro applicato alla calibrazione è che
+la superficie delle configurazioni ammissibili \(V\) è
+\emph{non lineare}: i parametri di \(\mat{K}\), \(\mat{R}_j\),
+\(\mathbf{t}_j\) e \(\mathbf{k}_r\) entrano nella funzione di
+riproiezione in modo polinomiale, quindi non è possibile trovare
+\(\hat\theta^*\) in forma chiusa. La pipeline adottata risolve il
+problema in due fasi:
+
+\begin{enumerate}
+
+  \item \textbf{Inizializzazione lineare (DLT + SVD).}
+  Per ogni frame \(j\) si costruisce il sistema lineare omogeneo
+  \(\mat{A}_j\vect{m}=\vect{0}\) tramite \emph{Direct Linear
+  Transform} (DLT): le corrispondenze punto--immagine vengono scritte
+  come equazioni lineari negli elementi di \(\mat{M}_j\).
+  Il sistema è sovradeterminato e si risolve ai minimi quadrati
+  tramite \emph{Singular Value Decomposition} (SVD): la soluzione è
+  il vettore singolare destro corrispondente al valore singolare
+  minimo di \(\mat{A}_j\), che individua la direzione nello spazio
+  dei parametri più vicina al nucleo. Dalle omografie \(\mat{M}_j\)
+  si ricava \(\mat{K}\) per fattorizzazione di Cholesky su
+  \(\mat{\Gamma}^{-1}\). Il risultato \(\hat\theta_0\) è una buona
+  approssimazione iniziale, ma non giace ancora su \(V\) poiché
+  ignora distorsione e rumore.
+
+  \item \textbf{Raffinamento non lineare (Levenberg--Marquardt).}
+  Partendo da \(\hat\theta_0\), l'algoritmo di
+  \emph{Levenberg--Marquardt} (LM) si muove iterativamente nello
+  spazio dei parametri verso il minimo di \(\epsilon_{\mathrm{RMSE}}\).
+  Ad ogni passo combina la robustezza della \emph{discesa del
+  gradiente} (quando è lontano dal minimo) con la convergenza rapida
+  del metodo di \emph{Gauss--Newton} (quando è vicino), proiettando
+  progressivamente \(\hat\theta\) sulla superficie ammissibile \(V\).
+
+\end{enumerate}

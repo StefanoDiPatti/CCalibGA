@@ -1,201 +1,409 @@
 \section{Fondamenti di Geometria Proiettiva}
 \label{sec:geom_proj}
 
-\subsection{Coordinate omogenee e spazio proiettivo}
+%─────────────────────────────────────────────
+\subsection{Coordinate omogenee e piano proiettivo \(\mathbb{P}^2\)}
+\label{sub:coord_omogenee}
 
-Lo spazio proiettivo \(\mathbb{P}^n\) estende \(\mathbb{R}^n\) aggiungendo
-punti all'infinito: un punto di \(\mathbb{P}^n\) è una classe di equivalenza
-\([x_0 : x_1 : \cdots : x_n]\) con \((x_0,\dots,x_n)\neq\mathbf{0}\),
-dove due vettori sono equivalenti se proporzionali.
+Fissiamo un sistema di riferimento affine euclideo \emph{destrorso}
+in \(\mathbb{E}^3\) con assi \(X,Y,U\) e versori
+\(\vect{e}_1,\vect{e}_2,\vect{e}_3\). Il piano \(U=1\) taglia
+l'asse \(U\) nel punto \((0,0,1)\) e induce su se stesso un nuovo
+sistema di riferimento con coordinate euclidee \((x,y)\).
 
-In \(\mathbb{P}^2\) un punto euclideo \((x,y)\) si rappresenta come
-\(\homo{x} = (x_1, x_2, x_3)^T\) con \(x = x_1/x_3\),
-\(y = x_2/x_3\). Una retta di equazione \(ax+by+c=0\) corrisponde al
-vettore \(\mathbf{l}=(a,b,c)^T\), e il punto \(\homo{x}\) giace su
-\(\mathbf{l}\) se e solo se \(\mathbf{l}^T\homo{x} = 0\).
-
-\begin{defn}[Dualità in \(\mathbb{P}^2\)]
-In \(\mathbb{P}^2\) punti e rette sono \emph{duali}: ogni enunciato che
-coinvolge punti e rette rimane valido scambiando i due ruoli.
-L'intersezione di due rette \(\mathbf{l},\mathbf{m}\) è
-\(\homo{x} = \mathbf{l} \times \mathbf{m}\);
-la retta per due punti \(\homo{x},\homo{y}\) è
-\(\mathbf{l} = \homo{x} \times \homo{y}\).
-\end{defn}
-
-In \(\mathbb{P}^3\) un punto è \(\homo{X} = (X,Y,Z,W)^T\); un piano è
-il vettore duale \(\boldsymbol{\pi} = (\alpha,\beta,\gamma,\delta)^T\)
-tale che \(\boldsymbol{\pi}^T \homo{X} = 0\)~\cite[Cap.~2]{HZ2004}.
-
-\subsection{Punti propri e punti impropri}
-\label{sub:punti_propri_impropri}
-
-In \(\mathbb{P}^2\) un punto \(\homo{x} = (x_1, x_2, x_3)^T\) si dice
-\emph{proprio} se \(x_3 \neq 0\): in tal caso la divisione per \(x_3\)
-restituisce le coordinate euclidee finite \((x_1/x_3,\, x_2/x_3)\).
-Se invece \(x_3 = 0\), il punto è \emph{improprio} (o \emph{punto
-all'infinito}) e rappresenta una \emph{direzione} nel piano:
-non ha controparte euclidea, ma è pienamente definito come
-elementodi \(\mathbb{P}^2\).
-
-\begin{oss}
-Il piano all'infinito \(\pi_\infty\) di \(\mathbb{P}^3\) ha equazione
-omogenea \(W = 0\) ed è il luogo dei punti impropri dello spazio;
-in \(\mathbb{P}^2\) la retta all'infinito \(\mathbf{l}_\infty = (0,0,1)^T\)
-è il luogo dei punti impropri del piano.
-Rette parallele di direzione \(\mathbf{d} = (d_1, d_2)^T\) si incontrano
-tutte nel punto improprio \((d_1, d_2, 0)^T \in \mathbf{l}_\infty\).
-\end{oss}
-
-Questa distinzione è operativamente rilevante per il progetto:
-quando la camera osserva il pattern planare, la proiezione prospettica
-trasforma punti propri del piano del target in punti propri
-dell'immagine. Tuttavia la retta all'infinito \(\mathbf{l}_\infty\)
-del piano del pattern viene mappata in una retta propria
-dell'immagine (la \emph{retta orizzonte}), e i punti impropri del
-pattern corrispondono ai \emph{punti di fuga} nell'immagine~\cite[Sez.~2.2]{HZ2004}.
-Riportare l'immagine a una vista rettificata equivale quindi
-a rimandare la retta orizzonte verso l'infinito, ripristinando
-la struttura affine del piano originale.
-
-\subsection{Trasformazioni proiettive e gerarchia}
-\label{sub:proiettivita}
-
-Una \emph{proiettività} (omografia) di \(\mathbb{P}^n\) è una biiezione
-indotta da una matrice invertibile \((n{+}1)\times(n{+}1)\):
+Si vuole costruire una \emph{corrispondenza biunivoca} tra i punti del
+piano \(U=1\) e le rette uscenti dall'origine \(O\). Ogni retta
+uscente da \(O\) è individuata da un vettore direzione
 \[
-  \homo{x}' = \mat{H}\,\homo{x}, \qquad \mat{H} \in GL(n+1).
+  \vect{v}
+  = \alpha\,\vect{e}_1 + \beta\,\vect{e}_2 + \delta\,\vect{e}_3,
+  \qquad (\alpha,\beta,\delta)\neq(0,0,0).
 \]
-
-Poiché \(\mat{H}\) è invertibile, anche la trasformazione inversa
-\(\homo{x} = \mat{H}^{-1}\homo{x}'\) è una proiettività. Questo fatto,
-apparentemente ovvio, è geometricamente rilevante: l'omografia che
-correla il piano del pattern con il piano immagine può essere
-invertita per ottenere la vista rettificata, e tale inversione
-è ancora una proiettività — nessuna nuova classe di trasformazione
-è necessaria per descrivere la rettifica.
-
-\begin{table}[H]
-\centering
-\caption{Gerarchia delle trasformazioni planari con gradi di libertà (dof)
-         e invarianti geometrici \cite[Tab.~2.1]{HZ2004}.}
-\label{tab:trasformazioni}
-\begin{tabular}{llcc}
-\toprule
-\textbf{Tipo} & \textbf{Forma di \(\mat{H}\)} & \textbf{dof} & \textbf{Invarianti} \\
-\midrule
-Isometria    & \(\bigl(\begin{smallmatrix}\mat{R}&\mathbf{t}\\\mathbf{0}^T&1\end{smallmatrix}\bigr)\) & 3 & lunghezze, angoli \\
-Similarità   & \(\bigl(\begin{smallmatrix}s\mat{R}&\mathbf{t}\\\mathbf{0}^T&1\end{smallmatrix}\bigr)\) & 4 & angoli, rapporti di lunghezza \\
-Affinità     & \(\bigl(\begin{smallmatrix}\mat{A}&\mathbf{t}\\\mathbf{0}^T&1\end{smallmatrix}\bigr)\) & 6 & parallelismo, rapporti di aree \\
-Proiettività & \(\mat{H}\) (generica) & 8 & birapporto, collinearità \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsection{Le affinità come caso speciale delle proiettività}
-\label{sub:affinita_proiettivita}
-
-Dall'ispezione della Tabella~\ref{tab:trasformazioni} emerge la gerarchia:
+Se \(\delta\neq 0\), la retta generata da \(\vect{v}\) interseca il
+piano \(U=1\) nel punto
 \[
-  \text{Isometrie} \subset \text{Similarità} \subset \text{Affinità}
-  \subset \text{Proiettività}.
+  \left(\frac{\alpha}{\delta},\;\frac{\beta}{\delta},\;1\right),
 \]
-Una trasformazione affine ha la forma
+che nel sistema di riferimento indotto ha coordinate euclidee
 \[
-  \mat{H}_{\text{aff}} =
-  \begin{pmatrix} \mat{A} & \mathbf{t} \\ \mathbf{0}^T & 1 \end{pmatrix},
-  \qquad \mat{A} \in GL(2),
+  x = \frac{\alpha}{\delta}, \qquad y = \frac{\beta}{\delta}.
 \]
-dove l'ultima riga è fissa a \((0,0,1)\). Questo vincolo ha una
-interpretazione geometrica precisa: una trasformazione affine
-\emph{manda i punti impropri in punti impropri}, cioè preserva
-la retta all'infinito \(\mathbf{l}_\infty\) come insieme
-(non necessariamente punto per punto). In altre parole, le rette
-parallele prima della trasformazione rimangono parallele dopo,
-perché i loro punti di fuga restano su \(\mathbf{l}_\infty\).
+Se invece \(\delta=0\), la retta è parallela al piano \(U=1\) e non
+lo interseca: essa individua una \emph{direzione} del piano,
+ovvero un \emph{punto improprio}.
 
-Una proiettività generica, invece, può mappare punti impropri
-in punti propri e viceversa: è esattamente questo che accade
-quando la camera inquadra il pattern da una posa obliqua,
-portando i punti di fuga del pattern all'interno dell'immagine.
-La rettifica dell'immagine consiste nel trovare una omografia
-\(\mat{H}\) che riporti quei punti di fuga all'infinito,
-restaurando la struttura affine del piano originale.
-
-In CCalibGA questa comprensione è fondamentale: la matrice
-intrinseca \(\mat{K}\) e la posa \([\mat{R}|\mathbf{t}]\)
-stimate durante la calibrazione permettono di costruire esattamente
-quell'omografia di rettifica.
-
-\subsection{Birapporto}
-
-Il \emph{birapporto} (cross-ratio) di quattro punti collineari
-\(A,B,C,D\) è l'unico invariante scalare delle proiettività:
+Il \textbf{piano proiettivo} \(\mathbb{P}^2\) è l'unione di tutti i
+punti propri e impropri così costruiti: ogni suo elemento è
+una classe di equivalenza
 \[
-  (A,B;C,D)
-  \;=\;
-  \frac{\overline{AC}\cdot\overline{BD}}{\overline{AD}\cdot\overline{BC}},
+  \homo{x} = (\alpha:\beta:\delta)\neq(0:0:0),
+  \qquad
+  (\alpha:\beta:\delta)\sim(\varrho\alpha:\varrho\beta:\varrho\delta),
+  \quad\varrho\neq 0,
 \]
-dove \(\overline{PQ}\) denota la distanza orientata tra \(P\) e \(Q\).
-Il birapporto è preservato da qualsiasi proiettività e rappresenta
-lo strumento canonico per verificare la coerenza delle corrispondenze
-punto-punto nel matching tra immagini~\cite[Sez.~2.4]{HZ2004}.
-
-\subsection{Conica assoluta e IAC}
-\label{sub:IAC}
-
-La \emph{conica assoluta} \(\Omega_\infty\) è definita come
-l'intersezione del piano all'infinito \(\pi_\infty\) (con \(W=0\) in
-\(\mathbb{P}^3\)) con la sfera unitaria; la sua matrice è
-\(\mat{I}_3\)~\cite[Sez.~8.3]{HZ2004}. I suoi punti soddisfano:
+La corrispondenza con \(\mathbb{E}^2\) è dunque:
 \[
-  X^2+Y^2+Z^2=0, \quad W=0,
+  \begin{bmatrix}\alpha\\\beta\\\delta\end{bmatrix}
+  \;\longmapsto\;
+  \begin{cases}
+    \left(\dfrac{\alpha}{\delta},\,\dfrac{\beta}{\delta}\right)
+      & \text{se } \delta\neq 0 \quad\text{(punto proprio),}\\[8pt]
+    \text{punto improprio di direzione }(\alpha,\beta)
+      & \text{se } \delta=0.
+  \end{cases}
 \]
-e sono necessariamente complessi; i \emph{punti circolari all'infinito}
-\(\mathbf{I} = (1,i,0)^T\) e \(\mathbf{J}=(1,-i,0)^T\) ne sono la
-proiezione nel piano.
-
-L'\emph{Immagine della Conica Assoluta} (IAC), indicata con \(\omega\),
-è la proiezione di \(\Omega_\infty\) tramite \(\mat{P}=\mat{K}[\mat{R}|\mathbf{t}]\):
-\[
-  \omega = \mat{K}^{-T}\mat{K}^{-1} = (\mat{K}\mat{K}^T)^{-1}.
-  \label{eq:IAC}
-\]
-Questa relazione è il cuore del metodo di Zhang: imporre che
-\(\mat{H}\) mappi \(\Omega_\infty\) in \(\omega\) fornisce due equazioni
-lineari nei coefficienti di \(\omega\), da cui si estrae \(\mat{K}\) per
-decomposizione di Cholesky~\cite[Prop.~8.5]{HZ2004}.
 
 \begin{figure}[H]
 \centering
-\begin{tikzpicture}[scale=1.0, >=Stealth,
-  plane/.style={draw=gray!60, fill=gray!10, opacity=0.8},
-  arr/.style={->, thick, blue!70!black}]
+\begin{tikzpicture}[scale=1.5, >=Stealth]
 
-  \draw[plane] (-1.5,-0.8) -- (1.5,-0.8) -- (2.5,0.5) -- (-0.5,0.5) -- cycle;
-  \node[below right, gray] at (2.3,0.5) {\small Piano \(Z=0\)};
+  % ── Parte asse U sotto il piano (tratteggiata) ───────────────
+  \draw[thick, dashed, gray!40] (0,0,0) -- (0,1.0,0);
 
-  \draw[plane, fill=orange!15]
-    (3.5,-0.8) -- (5.5,-0.8) -- (5.5,1.6) -- (3.5,1.6) -- cycle;
-  \node[above, orange!70!black] at (4.5,1.65) {\small Piano immagine};
+  % ── Piano U=1 ────────────────────────────────────────────────
+  \draw[blue, thick, fill=blue!8, fill opacity=0.65]
+    (-1.6, 1.0,  0.0) --
+    (-0.4, 1.0,  1.8) --
+    ( 2.2, 1.0,  1.8) --
+    ( 1.0, 1.0,  0.0) -- cycle;
 
-  \node[circle, fill=black, inner sep=2pt,
-        label=above:{\small\(\mat{C}\)}] (C) at (2.0,1.8) {};
+  \node[blue, right] at (2.2, 1.0, 1.4) {\(U=1\)};
 
-  \foreach \px/\py/\qx/\qy in
-    {0.0/-0.2/3.9/0.2, 0.5/0.3/4.3/0.9, -0.5/0.1/4.1/0.5}{
-    \draw[arr] (C) -- (\px,\py);
-    \draw[arr,dashed] (\px,\py) -- (\qx,\qy);
-  }
+  % ── Punto origine locale: intersezione asse U con piano ──────
+  \coordinate (Q) at (0, 1.0, 0);
+  \fill[black] (Q) circle (1.8pt);
 
-  \node[below] at (0.0,-0.25) {\small \(\homo{X}\)};
-  \node[right]  at (4.15,0.5) {\small \(\homo{x}\)};
+  % ── Sistema di riferimento locale sul piano ───────────────────
+  \draw[->, thick, black!70] (Q) -- +(-0.6,-0.43,0)
+        node[left, font=\small] {\(x\)};
+  \draw[->, thick, black!70] (Q) -- +(0.7, 0, 0)
+        node[right, font=\small] {\(y\)};
 
-  \draw[->, thick, red!70!black] (1.0,0.3) to[bend left=20]
-    node[above, red!70!black] {\(\mat{H}\)} (3.9,0.5);
+  % ── Asse U sopra il piano ─────────────────────────────────────
+  \draw[->, thick] (0,0,0) -- (0,2.5,0) node[above] {\(U\)};
+
+  % ── Asse Y ───────────────────────────────────────────────────
+  \draw[->, thick] (0,0,0) -- (2.4,0,0) node[right] {\(Y\)};
+
+  % ── Asse X ───────────────────────────────────────────────────
+  \draw[->, thick] (0,0,0) -- (-1.6,-1.1,0) node[below left] {\(X\)};
+
+  % ── Etichetta O ──────────────────────────────────────────────
+  \node[below, yshift=-2pt] at (0,0,0) {\(O\)};
+
+  % ── Versori e_1, e_2, e_3 (rossi, corti, da O) ───────────────
+  \draw[->, thick, red!80!black] (0,0,0) -- (-0.55,-0.40,0)
+        node[below, font=\small] {\(\vect{e}_1\)};
+  \draw[->, thick, red!80!black] (0,0,0) -- (0.65,0,0)
+        node[below, font=\small] {\(\vect{e}_2\)};
+  \draw[->, thick, red!80!black] (0,0,0) -- (0,0.80,0)
+        node[right, xshift=3pt, font=\small] {\(\vect{e}_3\)};
+
+  % ── Punto (x,y) sul piano, spostato lontano dal centro ───────
+  \coordinate (P) at (1.3, 1.0, 1.2);
+  \fill[green!60!black] (P) circle (2.5pt);
+  \node[above right] at (P) {\((x,y)\)};
+
+  % ── Raggio verde tratteggiato da O a (x,y) ───────────────────
+  \draw[green!60!black, thick, dashed] (0,0,0) -- (P);
+
 \end{tikzpicture}
-\caption{Proiettività \(\mat{H}\colon\mathbb{P}^2\to\mathbb{P}^2\) indotta
-         dalla camera: mette in corrispondenza il piano \(Z=0\) del target
-         con il piano immagine.}
-\label{fig:omografia}
+\caption{Sistema di riferimento destrorso \((X,Y,U)\): il piano \(U=1\)
+         interseca l'asse \(U\) inducendo un sistema di riferimento
+         euclideo locale \((x,y)\). La retta verde tratteggiata da
+         \(O\) al punto \((x,y)\) rappresenta la corrispondenza
+         biunivoca tra rette uscenti dall'origine e punti del piano.}
+\label{fig:piano_proiettivo}
+\end{figure}
+
+%─────────────────────────────────────────────
+\subsection{Rette in \(\mathbb{P}^2\) e dualità}
+\label{sub:dualita}
+
+In \(\mathbb{P}^2\) punti e rette sono \emph{duali}: ogni enunciato
+valido scambia la sua verità se si scambiano i ruoli di punti e rette.
+L'intersezione di due rette \(\vect{r}\) e \(\vect{s}\) da luogo
+a un punto (che può essere proprio o improprio);
+analogamente, due punti \(\homo{x}\) e \(\homo{y}\)
+individuano una (unica) retta che li contiene.
+In \(\mathbb{P}^2\) non esiste il parallelismo euclideo: due rette
+distinte si incontrano \emph{sempre} in esattamente un punto,
+che può essere improprio. Rette ``parallele'' nel senso euclideo
+si incontrano nel punto improprio condiviso
+\((\alpha:\beta:0)\) corrispondente alla loro direzione comune.
+L'insieme di tutti i punti impropri del piano forma la
+\emph{retta all'infinito}.
+
+\begin{oss}
+Quando la camera proietta una retta del piano euclideo, il raggio
+parallelo al piano immagine non ha immagine finita e corrisponde
+esattamente al punto improprio della retta proiettata.
+La chiusura proiettiva formalizza e risolve questa discontinuità,
+rendendo la proiezione una mappa ovunque definita.
+\end{oss}
+
+%─────────────────────────────────────────────
+\subsection{Spazio proiettivo \(\mathbb{P}^3\)}
+\label{sub:spazio_proiettivo}
+
+Lo spazio proiettivo \(\mathbb{P}^3\) è l'ambiente naturale in cui
+collocare oggetti tridimensionali che vogliamo rappresentare su piani
+bidimensionali --- come lo schermo o il sensore di una camera.
+Ogni punto dello spazio affine euclideo \((x,y,z)\) vi è immerso come
+\((x:y:z:1)\); a ogni vettore direzione
+\[
+  \vect{v} = \alpha\,\vect{e}_1 + \beta\,\vect{e}_2
+             + \delta\,\vect{e}_3
+\]
+si fa corrispondere il \emph{punto improprio} \((\alpha:\beta:\delta:0)\).
+Le direzioni di tutte le rette dello spazio affine corrispondono
+quindi a tutti e soli i punti impropri di \(\mathbb{P}^3\).
+In generale, ogni punto di \(\mathbb{P}^3\) è una classe di equivalenza
+\[
+  \homo{X} =
+  \begin{bmatrix} X \\ Y \\ Z \\ U \end{bmatrix},
+  \qquad (X,Y,Z,U)\neq(0,0,0,0),
+  \qquad
+  \homo{X}' = \varrho\,\homo{X},\quad \varrho\neq 0,
+\]
+con punto proprio se \(U\neq 0\) (coordinate euclidee
+\((X/U,\,Y/U,\,Z/U)\)) e punto improprio se \(U=0\).
+In \(\mathbb{P}^3\) non sono definiti angoli, distanze o direzioni.
+Le trasformazioni proiettive biunivoche conservano la collinearità e
+tutte le proprietà di incidenza; l'unico invariante \emph{scalare}
+per quattro punti collineari è il \emph{birapporto}
+\[
+  (A,B;C,D)
+  \;=\;
+  \frac{(c-a)(d-b)}{(d-a)(c-b)},
+\]
+dove \(a,b,c,d\) sono le coordinate dei quattro punti su una retta
+orientata. Qualsiasi proiettività lascia tale quantità invariata;
+se uno dei punti è improprio (es.\ \(D\to\infty\)) si riduce al
+rapporto semplice \((c-a)/(c-b)\).
+
+L'unione di tutti i punti impropri costituisce il
+\emph{piano all'infinito}, identificato dall'equazione \(\alpha X + \beta Y + \gamma Z + \delta U = 0\).
+
+\paragraph{Immersione di \(\mathbb{P}^2\) in \(\mathbb{P}^3\).}
+Un piano si identifica con \(\mathbb{P}^2\) tramite l'immersione
+\[
+  \homo{P} = \lambda\homo{A} + \mu\homo{B} + \nu\homo{C},
+  \qquad (\lambda:\mu:\nu)\in\mathbb{P}^2,
+\]
+dove \(\homo{A},\homo{B},\homo{C}\in\mathbb{P}^3\) sono tre punti non
+collineari che fungono da base. Le coordinate locali \((\lambda:\mu:\nu)\)
+sono coordinate proiettive bidimensionali; immerse in \(\mathbb{P}^3\)
+diventano coordinate globali a quattro componenti.
+
+La struttura di \(\mathbb{P}^3\) è il contesto in cui si colloca
+la camera: il sensore è un piano immerso nello spazio proiettivo,
+e la proiezione prospettica è una mappa da \(\mathbb{P}^3\) a
+\(\mathbb{P}^2\) descritta dalla matrice \(\mat{P}\), trattata nel
+Capitolo~\ref{sec:modello_camera}.
+
+\begin{comment}
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/projective_space_example.jpg}
+    \caption{Didascalia dell'immagine.}
+    \label{fig:etichetta}
+  \end{figure}
+\end{comment}
+
+%─────────────────────────────────────────────
+\subsection{Proiettività e prospettività}
+\label{sub:proiettivita}
+
+Una \emph{proiettività} di \(\mathbb{P}^2\) è una biiezione indotta
+da una matrice invertibile \(3\times 3\):
+\[
+  \homo{x}' = \mat{M}\,\homo{x},
+  \qquad
+  \mat{M} =
+  \begin{bmatrix}
+    m_{11} & m_{12} & m_{13} \\
+    m_{21} & m_{22} & m_{23} \\
+    m_{31} & m_{32} & m_{33}
+  \end{bmatrix},
+  \quad \det\mat{M}\neq 0.
+\]
+\(\mat{M}\) è definita a meno di un fattore scalare non nullo
+(8 gradi di libertà effettivi). L'invertibilità garantisce che
+\(\homo{x}=\mat{M}^{-1}\homo{x}'\) sia ancora una proiettività:
+l'inversa di una proiettività è una proiettività.
+
+Una \emph{prospettività} è il caso speciale in cui la biiezione è
+indotta da una proiezione da un centro \(C\): tutti i raggi passano
+per \(C\), e ogni punto del piano di partenza viene inviato
+all'intersezione del raggio \(C\homo{x}\) con il piano di arrivo.
+Una composizione di prospettività è in generale una proiettività,
+ma non necessariamente una prospettività.
+
+\begin{oss}[Affinità come caso speciale]
+Le trasformazioni affini emergono come sottogruppo delle proiettività
+quando si impone che i punti rimangano dello stesso tipo: propri in
+propri e impropri in impropri.
+Se \(\homo{x}=(\alpha:\beta:0)\) è un punto improprio, la sua
+immagine tramite \(\mat{M}\) ha terza coordinata
+\(m_{31}\alpha + m_{32}\beta\): affinché sia ancora zero per ogni
+direzione \((\alpha,\beta)\), occorre \(m_{31}=m_{32}=0\).
+Inoltre, poiché \(\det\mat{M}\neq 0\) implica \(m_{33}\neq 0\),
+si può dividere l'intera matrice per \(m_{33}\), normalizzando
+l'elemento in posizione \((3,3)\) a~\(1\). Si ottiene così la
+forma triangolare a blocchi
+\[
+  \mat{M}_{\mathrm{aff}} =
+  \begin{bmatrix}
+    m_{11} & m_{12} & m_{13} \\
+    m_{21} & m_{22} & m_{23} \\
+    0      & 0      & 1
+  \end{bmatrix},
+\]
+che agisce su un punto proprio \((\alpha:\beta:1)\) come
+\[
+  \mat{M}_{\mathrm{aff}}
+  \begin{bmatrix}\alpha\\\beta\\1\end{bmatrix}
+  =
+  \begin{bmatrix}m_{11}&m_{12}\\m_{21}&m_{22}\end{bmatrix}
+  \begin{bmatrix}\alpha\\\beta\end{bmatrix}
+  +
+  \begin{bmatrix}m_{13}\\m_{23}\end{bmatrix},
+\]
+ovvero una trasformazione lineare \(2\times 2\) invertibile più una
+traslazione. Le affinità sono dunque un caso particolare delle
+proiettività, con la struttura della matrice che emerge
+naturalmente dal vincolo di preservare i punti impropri.
+\end{oss}
+
+\begin{defn}[Proiettività da quattro punti]
+Quattro coppie di punti in posizione generale (nessun tre collineari)
+determinano \emph{univocamente} \(\mat{M}\) a meno di scala.
+Dati i punti di partenza
+\(\homo{x}_i=(\alpha_i:\beta_i:\delta_i)\) e di arrivo
+\(\homo{x}'_i=(\alpha'_i:\beta'_i:\delta'_i)\)
+con \(i=1,\dots,4\), si costruisce il sistema
+\[
+  \mat{M}
+  \begin{bmatrix}\alpha_i\\\beta_i\\\delta_i\end{bmatrix}
+  = \varrho_i
+  \begin{bmatrix}\alpha'_i\\\beta'_i\\\delta'_i\end{bmatrix},
+\]
+dove i fattori di proporzionalità \(\varrho_i\) vengono stimati
+imponendo la consistenza su tutti e quattro i punti, ricavando
+infine \(\mat{M}\) univoca a meno di scala globale.
+\end{defn}
+
+Nel progetto, la stima di questa matrice per ciascun frame del
+pattern è il passo fondamentale della calibrazione: a ogni immagine
+acquisita corrisponde una \(\mat{M}_i\) che correla i punti
+\((X_j,Y_j,0)\) del target con le loro proiezioni \((u_j,v_j)\)
+sul sensore. L'algoritmo genetico seleziona poi il sottoinsieme di
+frame --- e i flag di calibrazione --- che minimizzano l'errore di
+riproiezione.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=1.0, >=Stealth]
+
+  %════════════════════════════════════════════════════════════════
+  % PANNELLO SINISTRO: quadrato nel piano affine (terreno)
+  %════════════════════════════════════════════════════════════════
+  \begin{scope}[xshift=-4.5cm]
+
+    \draw[->, gray!70] (-0.3, 0) -- (2.8, 0) node[right, font=\small] {\(x\)};
+    \draw[->, gray!70] (0, -0.3) -- (0, 2.8) node[above, font=\small] {\(y\)};
+
+    \coordinate (A) at (0.5, 0.5);
+    \coordinate (B) at (2.0, 0.5);
+    \coordinate (C) at (2.0, 2.0);
+    \coordinate (D) at (0.5, 2.0);
+
+    \draw[blue!70!black, thick]
+      (A) -- (B) -- (C) -- (D) -- cycle;
+
+    \fill[red!70!black] (1.25, 1.25) circle (2.5pt)
+          node[right, font=\small] {\(P\)};
+
+    \fill[black] (A) circle (2pt); \node[below left,  font=\small] at (A) {\(A\)};
+    \fill[black] (B) circle (2pt); \node[below right, font=\small] at (B) {\(B\)};
+    \fill[black] (C) circle (2pt); \node[above right, font=\small] at (C) {\(C\)};
+    \fill[black] (D) circle (2pt); \node[above left,  font=\small] at (D) {\(D\)};
+
+    \draw[blue!30!black, dashed, thin] (-0.2, 0.5) -- (2.8, 0.5);
+    \draw[blue!30!black, dashed, thin] (-0.2, 2.0) -- (2.8, 2.0);
+    \draw[blue!30!black, dashed, thin] (0.5, -0.2) -- (0.5, 2.8);
+    \draw[blue!30!black, dashed, thin] (2.0, -0.2) -- (2.0, 2.8);
+
+    \node[right, font=\footnotesize, blue!50!black] at (2.8, 0.5)  {\(\to\infty\)};
+    \node[right, font=\footnotesize, blue!50!black] at (2.8, 2.0)  {\(\to\infty\)};
+    \node[above, font=\footnotesize, blue!50!black] at (0.5, 2.8)  {\(\uparrow\infty\)};
+    \node[above, font=\footnotesize, blue!50!black] at (2.0, 2.8)  {\(\uparrow\infty\)};
+
+    \node[font=\small\bfseries] at (1.25, -0.7) {Piano affine \(\mathbb{E}^2\)};
+
+  \end{scope}
+
+  %════════════════════════════════════════════════════════════════
+  % FRECCIA + M
+  %════════════════════════════════════════════════════════════════
+  \draw[->, very thick, gray!60] (-1.3, 1.1) -- (1.3, 1.1)
+        node[midway, above, font=\small] {\(\mat{M}\)};
+
+  %════════════════════════════════════════════════════════════════
+  % PANNELLO DESTRO: immagine proiettiva (quadrilatero deformato)
+  %════════════════════════════════════════════════════════════════
+  \begin{scope}[xshift=4.5cm]
+
+    \coordinate (Ap) at (-1.2, -1.0);
+    \coordinate (Bp) at ( 1.5, -0.7);
+    \coordinate (Cp) at ( 0.8,  1.3);
+    \coordinate (Dp) at (-0.6,  1.5);
+
+    \draw[blue!70!black, thick]
+      (Ap) -- (Bp) -- (Cp) -- (Dp) -- cycle;
+
+    \fill[black] (Ap) circle (2pt); \node[below left,  font=\small] at (Ap) {\(A'\)};
+    \fill[black] (Bp) circle (2pt); \node[below right, font=\small] at (Bp) {\(B'\)};
+    \fill[black] (Cp) circle (2pt); \node[above right, font=\small] at (Cp) {\(C'\)};
+    \fill[black] (Dp) circle (2pt); \node[above left,  font=\small] at (Dp) {\(D'\)};
+
+    \fill[red!70!black] (0.15, 0.3) circle (2.5pt)
+          node[right, font=\small] {\(P'\)};
+
+    \draw[blue!30!black, dashed, thin] (Ap) -- +($3*(Bp)-3*(Ap)$);
+    \draw[blue!30!black, dashed, thin] (Dp) -- +($3*(Cp)-3*(Dp)$);
+
+    \coordinate (Kx) at (3.8, -0.2);
+    \fill[red!80!black] (Kx) circle (3pt);
+    \node[right, font=\small, red!80!black] at (Kx) {\(K_x\)};
+    \node[below right, font=\footnotesize, red!60!black] at (3.8, -0.45)
+          {\((\alpha:\beta:0)\)};
+
+    \draw[blue!30!black, dashed, thin] (Ap) -- +($2.5*(Dp)-2.5*(Ap)$);
+    \draw[blue!30!black, dashed, thin] (Bp) -- +($2.5*(Cp)-2.5*(Bp)$);
+
+    \coordinate (Ky) at (0.05, 3.2);
+    \fill[red!80!black] (Ky) circle (3pt);
+    \node[above, font=\small, red!80!black] at (Ky) {\(K_y\)};
+    \node[right, font=\footnotesize, red!60!black] at (0.2, 3.0)
+          {\((\gamma:\delta:0)\)};
+
+    \draw[red!60!black, dashed, thick] (Kx) -- (Ky)
+          node[midway, right, font=\small, red!70!black]
+          {\(\vect{l}_\infty\)};
+
+    \node[font=\small\bfseries] at (0.3, -1.55)
+          {Piano proiettivo \(\mathbb{P}^2\)};
+
+  \end{scope}
+
+\end{tikzpicture}
+\caption{Effetto di una proiettività \(\mat{M}\) su un quadrato:
+         nel piano affine \(\mathbb{E}^2\) (sinistra) i lati paralleli
+         non si incontrano. In \(\mathbb{P}^2\) (destra) la proiettività
+         deforma il quadrato in un quadrilatero generico; i prolungamenti
+         dei lati convergono ai \emph{punti impropri} \(K_x\) e \(K_y\),
+         entrambi sulla retta all'infinito \(\vect{l}_\infty\).}
+\label{fig:proiettivita_quadrato}
 \end{figure}

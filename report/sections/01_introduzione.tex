@@ -7,18 +7,18 @@ e tangenziale. Senza questa informazione è impossibile estrarre misure
 metriche coerenti dal piano immagine, né ricostruire correttamente la
 geometria della scena osservata.
 
-Il progetto \textbf{CCalibGA} si colloca in questo ambito e propone un
+Il progetto si colloca in questo ambito e propone un
 flusso di calibrazione che si distingue dall'approccio classico di
-Zhang~\cite{Zhang2000} lungo due dimensioni:
+Zhang lungo due dimensioni:
 
 \begin{enumerate}[label=\arabic*.]
   \item \textbf{Pattern planare custom.} Invece della scacchiera
         bianco-nera, il tool accetta qualsiasi immagine planare fornita
         dall'utente. I keypoint affini vengono individuati tramite il
         modulo \texttt{cv2.ccalib.CustomPattern} di
-        OpenCV~\cite{OpenCVccalib}, che localizza punti stabili
+        OpenCV, che localizza punti stabili
         sull'immagine di riferimento e li insegue nelle fotografie di
-        calibrazione tramite matching di descrittori con verifica RANSAC.
+        calibrazione tramite matching di descrittori.
 
   \item \textbf{Ottimizzazione tramite Algoritmo Genetico (GA).}
         Dopo la prima stima di \(\mat{K}\) con il solver di OpenCV,
@@ -30,11 +30,4 @@ Zhang~\cite{Zhang2000} lungo due dimensioni:
         combinazione ottimale di flag.
 \end{enumerate}
 
-La relazione è strutturata come segue.
-Le Sezioni~\ref{sec:geom_proj}--\ref{sec:distorsione} presentano la
-teoria matematica indispensabile, seguendo i capitoli 2, 6 e 7 di
-Hartley e Zisserman~\cite{HZ2004}.
-La Sezione~\ref{sec:pattern_custom} descrive il flusso geometrico del
-matching con pattern custom a confronto con Zhang.
-La Sezione~\ref{sec:ga} illustra il funzionamento dell'Algoritmo Genetico.
-La Sezione~\ref{sec:risultati} riporta i risultati sperimentali.
+\newpage

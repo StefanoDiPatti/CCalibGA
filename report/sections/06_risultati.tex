@@ -1,0 +1,51 @@
+\section{Verifica Geometrica della Calibrazione}
+\label{sec:verifica_geometrica}
+
+Al termine della calibrazione, oltre a valutare
+\(\epsilon_{\mathrm{RMSE}}\), è possibile verificare visivamente la
+qualità dei parametri stimati in due modi complementari: la
+\emph{proiezione del sistema di riferimento} e la \emph{rettifica
+prospettica} dell'immagine.
+
+%─────────────────────────────────────────────
+\subsection{Proiezione del sistema di riferimento}
+\label{sub:proiezione_assi}
+
+Si definisce l'origine \(O=(0,0,0)^T\) e tre punti
+\(P_X=(\ell,0,0)^T\), \(P_Y=(0,\ell,0)^T\), \(P_Z=(0,0,\ell)^T\)
+nel sistema affine del pattern, con \(\ell\) lunghezza fisica nota.
+Tramite la funzione di proiezione
+\[
+  \lambda\,\homo{x} = \mat{K}\,[\mat{R}_j \mid \mathbf{t}_j]\,\homo{X}
+\]
+i quattro punti vengono proiettati nel piano immagine e si tracciano
+i segmenti \(\overrightarrow{O'P_X'}\), \(\overrightarrow{O'P_Y'}\),
+\(\overrightarrow{O'P_Z'}\) con colori RGB\@. Se la calibrazione è
+corretta, gli assi convergono coerentemente all'origine del target
+e le loro lunghezze apparenti rispettano le proporzioni metriche
+del pattern; l'asse \(Z\) (normale al piano) si accorcia
+proporzionalmente all'angolo di inclinazione, comportamento atteso
+della proiezione prospettica che non conserva le lunghezze.
+
+%─────────────────────────────────────────────
+\subsection{Rettifica prospettica e geometria affine}
+\label{sub:rettifica}
+
+Il secondo strumento di verifica è la \emph{rettifica}: applicare
+la proiettività inversa \(\mat{H}^{-1}\) all'immagine per riportare
+il pattern in una vista frontale canonica. Poiché \(\mat{H}\) è una
+proiettività invertibile di \(\mathbb{P}^2\), anche \(\mat{H}^{-1}\)
+lo è: l'operazione non cambia classe di trasformazione. La rettifica
+è corretta quando le rette parallele del pattern --- che nella
+fotografia prospettica convergono verso punti di fuga (proiezioni
+di punti impropri del piano del pattern) --- tornano effettivamente
+parallele nell'immagine raddrizzata, segnale che la struttura affine
+del piano è stata recuperata.
+
+Le caratteristiche \emph{zone nere} che compaiono ai bordi
+dell'immagine rettificata hanno due cause geometriche: da un lato,
+la proiettività \(\mat{H}^{-1}\) può mandare pixel del canvas in
+posizioni esterne al frame originale (punti senza colore valido);
+dall'altro, la correzione della distorsione radiale e tangenziale
+via \((k_1,k_2,k_3,p_1,p_2)\) dilata localmente la griglia di pixel
+vicino ai bordi, lasciando regioni non coperte.

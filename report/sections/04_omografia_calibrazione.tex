@@ -1,96 +1,230 @@
 \section{Omografia, IAC e Stima di \texorpdfstring{\(\mat{K}\)}{K}}
-\label{sec:omografia_calib}
+\label{sec:omografia_calibrazione}
 
-\subsection{Omografia indotta da un piano}
+%─────────────────────────────────────────────
+\subsection{Coniche in \(\mathbb{P}^2\) e retroproiezione}
+\label{sub:coniche}
 
-Quando il pattern è \emph{planare} (piano \(Z=0\)), la proiezione si
-riduce a una omografia \(\mat{H}\in\mathbb{P}^{2\times2}\):
+Una conica in \(\mathbb{P}^2\) è descritta da una matrice
+\(\mat{\Gamma}\) simmetrica \(3\times3\) con \(\det\mat{\Gamma}\neq0\)
+tramite l'equazione
 \[
-  \lambda\,\homo{x} = \mat{H}\,\homo{m},
+  \homo{x}^T \mat{\Gamma}\, \homo{x} = 0.
+\]
+Se nello spazio 3D è presente una figura curva, i raggi visivi che
+partono dal suo contorno e convergono in \(C\) formano un
+\emph{cono 3D}; la sua intersezione con il piano del sensore produce
+una \emph{conica 2D}. La \emph{retroproiezione} di \(\mat{\Gamma}\)
+nello spazio 3D definisce la conica \(\mat{Q}\):
+\[
+  \mat{Q} = \mat{P}^T \mat{\Gamma}\, \mat{P},
   \qquad
-  \mat{H} = \mat{K}\bigl[\mathbf{r}_1,\,\mathbf{r}_2,\,\mathbf{t}\bigr],
-  \label{eq:H_da_P}
+  \homo{X}^T \mat{Q}\, \homo{X} = 0,
 \]
-dove \(\mathbf{r}_1,\mathbf{r}_2\) sono le prime due colonne di
-\(\mat{R}\) e \(\mathbf{t}=-\mat{R}\mat{C}\)~\cite[Sez.~1.1]{Zhang2000}.
-
-La stima di \(\mat{H}\) per ogni vista avviene con l'algoritmo DLT
-(Direct Linear Transform): date \(n\geq4\) corrispondenze
-\(\homo{m}_i\leftrightarrow\homo{x}_i\), si costruisce un sistema
-lineare sovradeterminato in \(\mathrm{vec}(\mat{H})\) risolto per
-SVD~\cite[Alg.~4.2]{HZ2004}.
-
-\subsection{Vincoli di ortonormalità e sistema lineare in \(\omega\)}
-
-\begin{prop}
-Sia \(\mat{H} = [\mathbf{h}_1,\mathbf{h}_2,\mathbf{h}_3]\).
-Poiché \(\mathbf{r}_1 = \mat{K}^{-1}\mathbf{h}_1\) e
-\(\mathbf{r}_2 = \mat{K}^{-1}\mathbf{h}_2\) sono colonne ortonormali di
-\(\mat{R}\in SO(3)\), valgono i due vincoli:
-\begin{align}
-  \mathbf{h}_1^T\,\omega\,\mathbf{h}_2 &= 0,
-  \label{eq:vincolo1}\\
-  \mathbf{h}_1^T\,\omega\,\mathbf{h}_1 &=
-  \mathbf{h}_2^T\,\omega\,\mathbf{h}_2,
-  \label{eq:vincolo2}
-\end{align}
-dove \(\omega = (\mat{K}\mat{K}^T)^{-1}\) è la
-IAC~\eqref{eq:IAC}~\cite[Prop.~8.5 e App.~1]{Zhang2000}.
-Con \(n\geq3\) viste si ottiene un sistema lineare sovradeterminato
-in \(\omega\), risolto per minimi quadrati.
-\end{prop}
-
-Una volta stimata \(\omega\), si ottiene \(\mat{K}\) per
-decomposizione di Cholesky di \(\omega^{-1}=\mat{K}\mat{K}^T\).
-
-\subsection{Recupero degli estrinseci}
-
-Gli estrinseci \([\mat{R}_j|\mathbf{t}_j]\) di ciascuna vista si
-recuperano da \(\mat{H}_j\) e \(\mat{K}\):
+dove \(\mat{Q}\) è \(4\times4\) simmetrica. Un punto \(\homo{X}_0\)
+appartiene alla conica retroproiettata se e solo se la sua immagine
+\(\mat{P}\homo{X}_0\) appartiene a \(\mat{\Gamma}\):
 \[
-  \mathbf{r}_1 = \lambda\mat{K}^{-1}\mathbf{h}_1,\quad
-  \mathbf{r}_2 = \lambda\mat{K}^{-1}\mathbf{h}_2,\quad
-  \mathbf{t}   = \lambda\mat{K}^{-1}\mathbf{h}_3,
-  \label{eq:estrinseci}
+  \homo{X}_0^T\, \mat{P}^T \mat{\Gamma}\, \mat{P}\,\homo{X}_0 = 0.
 \]
-con \(\lambda = \|\mat{K}^{-1}\mathbf{h}_1\|^{-1}\).
+Una proiettività \(\omega: \mathbb{P}^2 \to \mathbb{P}^2\) indotta da
+\(\mat{A}\) con \(\det\mat{A}\neq0\) trasforma la conica secondo
+\[
+  \mat{\Gamma}' = (\mat{A}^{-1})^T \mat{\Gamma}\, \mat{A}^{-1},
+\]
+poiché sostituendo \(\homo{x} = \mat{A}^{-1}\homo{x}'\) nell'equazione
+della conica si ottiene \(\homo{x}'^T\mat{\Gamma}'\homo{x}' = 0\).
 
-\subsection{Flusso geometrico completo}
+%─────────────────────────────────────────────
+\subsection{Conica assoluta \(\Omega\) e sua immagine}
+\label{sub:conica_assoluta}
+
+Una sfera nello spazio proiettivo ha equazione
+\[
+  X^2 + Y^2 + Z^2 + aX + bY + cZ + dU^2 = 0.
+\]
+Intersecandola con il piano all'infinito si ottiene la
+\emph{conica assoluta} \(\Omega\):
+\[
+  \begin{cases}
+    X^2 + Y^2 + Z^2 = 0 \\
+    U = 0
+  \end{cases}
+\]
+\(\Omega\) è indipendente dalla sfera scelta e non ha punti reali:
+i suoi elementi sono i \emph{punti circolari impropri}
+\((1:\pm i:0)\), comuni a qualsiasi piano \(\pi\) nello spazio.
+Per qualsiasi piano \(\pi\), i suoi punti circolari impropri
+\((1:\pm i:0)\in\pi\) si proiettano sul piano immagine tramite la
+proiettività \(\mat{K}\mat{R}\) (che mappa il piano improprio
+\(U=0\) sullo schermo). La conica immagine \(\mat{\Gamma}\) è:
+\[
+  \mat{\Gamma} = (\mat{K}\mat{R})^{-T}\,\mat{I}_3\,(\mat{K}\mat{R})^{-1}.
+\]
+Poiché \(\mat{R}\) è ortogonale (\(\mat{R}^{-1}=\mat{R}^T\)),
+il termine rotazionale si semplifica:
+\[
+  \mat{\Gamma}
+  = (\mat{K}^{-1})^T \underbrace{\mat{R}^{-T}\mat{R}^{-1}}_{=\,\mat{I}_3} \mat{K}^{-1}
+  = (\mat{K}^{-1})^T \mat{K}^{-1}.
+\]
+\(\mat{R}\) scompare grazie all'ortogonalità: i valori misurati
+sull'immagine dipendono quindi \emph{solo} da \(\mat{K}\).
+L'inversa di \(\mat{\Gamma}\), nota come
+\emph{Image of the Absolute Conic} (IAC), è:
+\[
+  \underbrace{
+  \begin{bmatrix}
+    f_1 & s   & x_0 \\
+    0   & f_2 & y_0 \\
+    0   & 0   & 1
+  \end{bmatrix}
+  }_{\mat{K}}
+  \underbrace{
+  \begin{bmatrix}
+    f_1 & 0   & 0 \\
+    s   & f_2 & 0 \\
+    x_0 & y_0 & 1
+  \end{bmatrix}
+  }_{\mat{K}^T}
+  =
+  \underbrace{
+  \begin{bmatrix}
+    g^2 + x_0^2 & x_0 y_0     & x_0 \\
+    x_0 y_0     & g^2 + y_0^2 & y_0 \\
+    x_0         & y_0         & 1
+  \end{bmatrix}
+  }_{\mat{\Gamma}^{-1}}.
+\]
 
 \begin{figure}[H]
 \centering
-\begin{tikzpicture}[>=Stealth,
-  node distance=1.0cm and 0cm,
-  box/.style={draw, rounded corners=5pt, fill=blue!8,
-              minimum width=4.0cm, minimum height=0.85cm,
-              align=center, font=\small},
-  ebox/.style={draw, rounded corners=5pt, fill=green!10,
-               minimum width=4.0cm, minimum height=0.85cm,
-               align=center, font=\small},
-  arr/.style={->, thick}]
+\begin{tikzpicture}[scale=1.2, >=Stealth]
 
-  \node[box]  (imgs)  {\(n\geq3\) immagini del pattern};
-  \node[box,  below=of imgs]  (corr)  {Corrispondenze
-                                        \(\homo{m}_i\leftrightarrow\homo{x}_i\)};
-  \node[box,  below=of corr]  (H)     {DLT \(\Rightarrow\) stima
-                                        \(\mat{H}_j\) per ogni vista};
-  \node[box,  below=of H]     (omega) {Vincoli~\eqref{eq:vincolo1}\eqref{eq:vincolo2}
-                                        \(\Rightarrow\) stima IAC \(\omega\)};
-  \node[ebox, below=of omega] (K)     {Cholesky su \(\omega^{-1}\)
-                                        \(\Rightarrow\) \(\mat{K}\)};
-  \node[ebox, below=of K]     (ext)   {Eq.~\eqref{eq:estrinseci}
-                                        \(\Rightarrow\) \([\mat{R}_j|\mathbf{t}_j]\)};
-  \node[ebox, below=of ext]   (ref)   {Raffinamento LM
-                                        (reprojection error)};
+  % ── Centro ottico C ──────────────────────────────────────────
+  \coordinate (C) at (0, 0);
+  \fill[black] (C) circle (2.5pt);
+  \node[below left] at (C) {\(C\)};
 
-  \draw[arr] (imgs)  -- (corr);
-  \draw[arr] (corr)  -- (H);
-  \draw[arr] (H)     -- (omega);
-  \draw[arr] (omega) -- (K);
-  \draw[arr] (K)     -- (ext);
-  \draw[arr] (ext)   -- (ref);
+  % ── Piano immagine (verticale a destra) ──────────────────────
+  \draw[blue!70!black, thick]
+    (3.5, -1.8) -- (3.5, 2.2);
+  \node[blue!70!black, right] at (3.5, 2.0) {\small piano immagine};
+
+  % ── Piano pi greco (inclinato, in basso a destra) ────────────
+  \draw[orange!80!black, thick]
+    (1.8, -2.0) -- (5.2, 0.6);
+  \node[orange!80!black, right] at (5.2, 0.5) {\small \(\pi\)};
+
+  % ── Cerchio sul piano pi greco (ellisse prospettica) ─────────
+  \draw[orange!60!black, thick]
+    (3.5, -0.9) ellipse (0.9cm and 0.28cm);
+
+  % ── Punti circolari impropri I, J sul piano pi greco ─────────
+  \coordinate (I)  at (2.62, -0.9);
+  \coordinate (J)  at (4.38, -0.9);
+  \fill[red!80!black] (I) circle (2.5pt);
+  \fill[red!80!black] (J) circle (2.5pt);
+  \node[below, font=\small, red!80!black] at (I) {\(I\)};
+  \node[below, font=\small, red!80!black] at (J) {\(J\)};
+
+  % ── Raggi da C verso I e J ────────────────────────────────────
+  \draw[red!60!black, dashed, thick] (C) -- (I);
+  \draw[red!60!black, dashed, thick] (C) -- (J);
+
+  % ── Proiezioni di I e J sul piano immagine ───────────────────
+  % Retta C->I interseca x=3.5:
+  % parametrica: (0,0) + t*(2.62-0, -0.9-0), t = 3.5/2.62
+  \coordinate (Iimg) at (3.5, -1.203);
+  % Retta C->J: t = 3.5/4.38
+  \coordinate (Jimg) at (3.5, -0.720);
+
+  \fill[red!80!black] (Iimg) circle (2.5pt);
+  \fill[red!80!black] (Jimg) circle (2.5pt);
+  \node[right, font=\small, red!80!black] at (Iimg) {\(i\)};
+  \node[right, font=\small, red!80!black] at (Jimg) {\(j\)};
+
+  % ── Conica Gamma sul piano immagine ──────────────────────────
+  \draw[blue!60!black, thick]
+    (3.5, -0.96) ellipse (0.30cm and 0.52cm);
+  \node[left, font=\small, blue!60!black] at (3.2, -0.96)
+        {\(\mat{\Gamma}\)};
+
+  % ── Asse ottico ───────────────────────────────────────────────
+  \draw[->, gray!60, thin] (C) -- (4.5, 0)
+        node[right, font=\small, gray!60] {\small asse ottico};
+
+  % ── Etichetta KR ─────────────────────────────────────────────
+  \node[font=\small, gray!40!black] at (1.6, 1.1)
+        {\(\mat{K}\mat{R}\)};
+  \draw[->, gray!50, thin] (1.6, 0.85) -- (2.4, 0.2);
+
 \end{tikzpicture}
-\caption{Flusso geometrico del metodo di Zhang. I blocchi verdi
-         producono i parametri finali~\cite[Fig.~1]{Zhang2000}.}
-\label{fig:flusso_zhang}
+\caption{Proiezione dei punti circolari impropri \(I=(1:+i:0)\) e
+         \(J=(1:-i:0)\) del piano \(\pi\) sul piano immagine tramite
+         \(\mat{K}\mat{R}\). Le loro immagini \(i\) e \(j\) definiscono
+         la conica \(\mat{\Gamma}\) (IAC) sul sensore.}
+\label{fig:IAC_proiezione}
 \end{figure}
+
+%─────────────────────────────────────────────
+\subsection{Stima di \(\mat{K}\) da omografie}
+\label{sub:stima_K}
+
+Il pattern usato nel progetto è planare (\(Z=0\)), quindi la terza
+colonna di \(\mat{P}\) è ridondante e ogni vista \(j\) fornisce
+un'\emph{omografia} \(\mat{M}_j\) (\(3\times3\), rango~3) che
+correla i punti \((X,Y,0)\) del target con le loro proiezioni
+\((u,v)\) sul sensore:
+\[
+  \varrho\,\homo{x} = \mat{M}_j\,\homo{X}_{2D},
+  \qquad
+  \homo{X}_{2D} = \begin{bmatrix} X \\ Y \\ 1 \end{bmatrix}.
+\]
+Denotando con \(\vect{h}_1, \vect{h}_2, \vect{h}_3\) le colonne
+di \(\mat{M}_j\), l'ortogonalità di \(\mat{R}\) impone due vincoli:
+\[
+  \vect{h}_1 \cdot \mat{\Gamma}\, \vect{h}_2 = 0,
+  \qquad
+  \vect{h}_1 \cdot \mat{\Gamma}\, \vect{h}_1
+  = \vect{h}_2 \cdot \mat{\Gamma}\, \vect{h}_2.
+\]
+Questi sono due equazioni lineari sui 6 elementi indipendenti di
+\(\mat{\Gamma}\). Con almeno \(n\geq3\) viste il sistema è
+determinato: si stima \(\mat{\Gamma}\), se ne ricava \(\mat{K}\)
+per fattorizzazione di Cholesky su
+\(\mat{\Gamma}^{-1} = \mat{K}\mat{K}^T\), e infine si ottengono
+i parametri estrinseci \((\mat{R}_j, \vect{c}_j)\) per ogni frame
+da
+\[
+  \mat{M}_j = \mat{K}
+  \begin{bmatrix} \vect{r}_1 & \vect{r}_2 & \vect{t} \end{bmatrix}.
+\]
+
+%─────────────────────────────────────────────
+\subsection{Modello di distorsione radiale e tangenziale}
+
+Il modello pinhole suppone una trasformazione lineare, ma le lenti reali
+introducono \emph{distorsione}: il punto effettivamente osservato
+\((x_d,y_d)\) differisce dal punto teorico \((x_n,y_n)\) secondo
+\begin{align}
+  x_d &= x_n(1+k_1r^2+k_2r^4+k_3r^6)
+        +2p_1x_ny_n+p_2(r^2+2x_n^2),\\
+  y_d &= y_n(1+k_1r^2+k_2r^4+k_3r^6)
+        +p_1(r^2+2y_n^2)+2p_2x_ny_n,
+\end{align}
+dove \(r^2=x_n^2+y_n^2\), \(k_1,k_2,k_3\) sono i coefficienti di
+distorsione radiale (modello di Brown--Conrady) e
+\(p_1,p_2\) quelli tangenziali.
+
+I coefficienti \((k_1,k_2,k_3,p_1,p_2)\) non compaiono nella derivazione
+lineare della IAC --- che è puramente proiettiva --- ma vengono stimati
+congiuntamente a \(\mat{K}\) nella fase di raffinamento: una volta nota
+una stima iniziale di \(\mat{K}\) tramite le omografie \(\mat{M}_j\),
+l'ottimizzazione di Levenberg--Marquardt minimizza l'errore di
+riproiezione tenendo conto dell'intera catena
+\[
+  (X,Y,Z) \;\xrightarrow{\mat{K},\,\mat{R}_j,\,\vect{c}_j}\;
+  (x_n, y_n) \;\xrightarrow{k_1,k_2,k_3,\,p_1,p_2}\;
+  (x_d, y_d) \;\xrightarrow{\text{pixel}}\; (u,v).
+\]
