@@ -7,33 +7,17 @@
 
 Una conica in \(\mathbb{P}^2\) è descritta da una matrice
 \(\mat{\Gamma}\) simmetrica \(3\times3\) con \(\det\mat{\Gamma}\neq0\)
-tramite l'equazione
+tramite l'equazione \(\homo{x}^T \mat{\Gamma}\, \homo{x} = 0\).
+Una proiettività indotta da \(\mat{A}\) trasforma la conica secondo
 \[
-  \homo{x}^T \mat{\Gamma}\, \homo{x} = 0.
+  \mat{\Gamma}' = (\mat{A}^{-1})^T \mat{\Gamma}\, \mat{A}^{-1}.
 \]
-Se nello spazio 3D è presente una figura curva, i raggi visivi che
-partono dal suo contorno e convergono in \(C\) formano un
-\emph{cono 3D}; la sua intersezione con il piano del sensore produce
-una \emph{conica 2D}. La \emph{retroproiezione} di \(\mat{\Gamma}\)
-nello spazio 3D definisce la conica \(\mat{Q}\):
-\[
-  \mat{Q} = \mat{P}^T \mat{\Gamma}\, \mat{P},
-  \qquad
-  \homo{X}^T \mat{Q}\, \homo{X} = 0,
-\]
-dove \(\mat{Q}\) è \(4\times4\) simmetrica. Un punto \(\homo{X}_0\)
-appartiene alla conica retroproiettata se e solo se la sua immagine
-\(\mat{P}\homo{X}_0\) appartiene a \(\mat{\Gamma}\):
-\[
-  \homo{X}_0^T\, \mat{P}^T \mat{\Gamma}\, \mat{P}\,\homo{X}_0 = 0.
-\]
-Una proiettività \(\omega: \mathbb{P}^2 \to \mathbb{P}^2\) indotta da
-\(\mat{A}\) con \(\det\mat{A}\neq0\) trasforma la conica secondo
-\[
-  \mat{\Gamma}' = (\mat{A}^{-1})^T \mat{\Gamma}\, \mat{A}^{-1},
-\]
-poiché sostituendo \(\homo{x} = \mat{A}^{-1}\homo{x}'\) nell'equazione
-della conica si ottiene \(\homo{x}'^T\mat{\Gamma}'\homo{x}' = 0\).
+La \emph{retroproiezione} di una conica immagine \(\mat{\Gamma}\)
+nello spazio 3D definisce la conica
+\(\mat{Q} = \mat{P}^T \mat{\Gamma}\, \mat{P}\).
+Queste regole di trasformazione sono la base algebrica che permette
+di propagare la geometria della conica assoluta dal piano all'infinito
+fino al sensore della camera, come descritto nella sezione seguente.
 
 %─────────────────────────────────────────────
 \subsection{Conica assoluta \(\Omega\) e sua immagine}
@@ -54,6 +38,16 @@ Intersecandola con il piano all'infinito si ottiene la
 \(\Omega\) è indipendente dalla sfera scelta e non ha punti reali:
 i suoi elementi sono i \emph{punti circolari impropri}
 \((1:\pm i:0)\), comuni a qualsiasi piano \(\pi\) nello spazio.
+
+\begin{oss}[Perché \(\mat{R}\) scompare]
+La conica assoluta \(\Omega\) è \emph{invariante per rotazioni}: non sposta i punti circolari impropri nel piano
+all'infinito, poiché è una trasformazione che conserva distanze e
+angoli e agisce \emph{entro} lo spazio euclideo, senza toccare la
+struttura del piano all'infinito. Di conseguenza, la conica immagine
+\(\mat{\Gamma}\) che si forma sul sensore dipende \emph{solo} da
+\(\mat{K}\).
+\end{oss}
+
 Per qualsiasi piano \(\pi\), i suoi punti circolari impropri
 \((1:\pm i:0)\in\pi\) si proiettano sul piano immagine tramite la
 proiettività \(\mat{K}\mat{R}\) (che mappa il piano improprio
@@ -68,8 +62,6 @@ il termine rotazionale si semplifica:
   = (\mat{K}^{-1})^T \underbrace{\mat{R}^{-T}\mat{R}^{-1}}_{=\,\mat{I}_3} \mat{K}^{-1}
   = (\mat{K}^{-1})^T \mat{K}^{-1}.
 \]
-\(\mat{R}\) scompare grazie all'ortogonalità: i valori misurati
-sull'immagine dipendono quindi \emph{solo} da \(\mat{K}\).
 L'inversa di \(\mat{\Gamma}\), nota come
 \emph{Image of the Absolute Conic} (IAC), è:
 \[
@@ -101,7 +93,7 @@ L'inversa di \(\mat{\Gamma}\), nota come
 \centering
 \begin{tikzpicture}[scale=1.2, >=Stealth]
 
-  % ── Centro ottico C ──────────────────────────────────────────
+  % ── Centro ottico C ────────────────────────────────────────────
   \coordinate (C) at (0, 0);
   \fill[black] (C) circle (2.5pt);
   \node[below left] at (C) {\(C\)};
@@ -128,11 +120,11 @@ L'inversa di \(\mat{\Gamma}\), nota come
   \node[below, font=\small, red!80!black] at (I) {\(I\)};
   \node[below, font=\small, red!80!black] at (J) {\(J\)};
 
-  % ── Raggi da C verso I e J ────────────────────────────────────
+  % ── Raggi da C verso I e J ─────────────────────────────────────
   \draw[red!60!black, dashed, thick] (C) -- (I);
   \draw[red!60!black, dashed, thick] (C) -- (J);
 
-  % ── Proiezioni di I e J sul piano immagine ───────────────────
+  % ── Proiezioni di I e J sul piano immagine ─────────────────────
   % Retta C->I interseca x=3.5:
   % parametrica: (0,0) + t*(2.62-0, -0.9-0), t = 3.5/2.62
   \coordinate (Iimg) at (3.5, -1.203);
@@ -150,11 +142,11 @@ L'inversa di \(\mat{\Gamma}\), nota come
   \node[left, font=\small, blue!60!black] at (3.2, -0.96)
         {\(\mat{\Gamma}\)};
 
-  % ── Asse ottico ───────────────────────────────────────────────
+  % ── Asse ottico ────────────────────────────────────────────────
   \draw[->, gray!60, thin] (C) -- (4.5, 0)
         node[right, font=\small, gray!60] {\small asse ottico};
 
-  % ── Etichetta KR ─────────────────────────────────────────────
+  % ── Etichetta KR ──────────────────────────────────────────────
   \node[font=\small, gray!40!black] at (1.6, 1.1)
         {\(\mat{K}\mat{R}\)};
   \draw[->, gray!50, thin] (1.6, 0.85) -- (2.4, 0.2);
@@ -163,7 +155,8 @@ L'inversa di \(\mat{\Gamma}\), nota come
 \caption{Proiezione dei punti circolari impropri \(I=(1:+i:0)\) e
          \(J=(1:-i:0)\) del piano \(\pi\) sul piano immagine tramite
          \(\mat{K}\mat{R}\). Le loro immagini \(i\) e \(j\) definiscono
-         la conica \(\mat{\Gamma}\) (IAC) sul sensore.}
+         la conica \(\mat{\Gamma}\) (IAC) sul sensore. Poiché \(\Omega\)
+         è invariante per rotazioni, \(\mat{\Gamma}\) dipende solo da \(\mat{K}\).}
 \label{fig:IAC_proiezione}
 \end{figure}
 
@@ -184,10 +177,10 @@ correla i punti \((X,Y,0)\) del target con le loro proiezioni
 Denotando con \(\vect{h}_1, \vect{h}_2, \vect{h}_3\) le colonne
 di \(\mat{M}_j\), l'ortogonalità di \(\mat{R}\) impone due vincoli:
 \[
-  \vect{h}_1 \cdot \mat{\Gamma}\, \vect{h}_2 = 0,
+  \vect{h}_1^T \mat{\Gamma}\, \vect{h}_2 = 0,
   \qquad
-  \vect{h}_1 \cdot \mat{\Gamma}\, \vect{h}_1
-  = \vect{h}_2 \cdot \mat{\Gamma}\, \vect{h}_2.
+  \vect{h}_1^T \mat{\Gamma}\, \vect{h}_1
+  = \vect{h}_2^T \mat{\Gamma}\, \vect{h}_2.
 \]
 Questi sono due equazioni lineari sui 6 elementi indipendenti di
 \(\mat{\Gamma}\). Con almeno \(n\geq3\) viste il sistema è

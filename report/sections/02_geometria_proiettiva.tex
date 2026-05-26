@@ -117,22 +117,17 @@ La corrispondenza con \(\mathbb{E}^2\) è dunque:
 \end{figure}
 
 %─────────────────────────────────────────────
-\subsection{Rette in \(\mathbb{P}^2\) e dualità}
+\subsection{Rette in \(\mathbb{P}^2\), dualità e retta all'infinito}
 \label{sub:dualita}
 
-In \(\mathbb{P}^2\) punti e rette sono \emph{duali}: ogni enunciato
-valido scambia la sua verità se si scambiano i ruoli di punti e rette.
-L'intersezione di due rette \(\vect{r}\) e \(\vect{s}\) da luogo
-a un punto (che può essere proprio o improprio);
-analogamente, due punti \(\homo{x}\) e \(\homo{y}\)
-individuano una (unica) retta che li contiene.
 In \(\mathbb{P}^2\) non esiste il parallelismo euclideo: due rette
-distinte si incontrano \emph{sempre} in esattamente un punto,
-che può essere improprio. Rette ``parallele'' nel senso euclideo
-si incontrano nel punto improprio condiviso
-\((\alpha:\beta:0)\) corrispondente alla loro direzione comune.
-L'insieme di tutti i punti impropri del piano forma la
-\emph{retta all'infinito}.
+distinte si incontrano \emph{sempre} in esattamente un punto, che
+può essere improprio. Rette parallele nel senso euclideo si incontrano
+nel punto improprio \((\alpha:\beta:0)\) corrispondente alla loro
+direzione comune; l'insieme di tutti i punti impropri forma la
+\emph{retta all'infinito}. Per dualità, punti e rette hanno ruoli
+simmetrici: due punti determinano univocamente una retta, e due rette
+determinano univocamente un punto (proprio o improprio).
 
 \begin{oss}
 Quando la camera proietta una retta del piano euclideo, il raggio
@@ -156,8 +151,6 @@ Ogni punto dello spazio affine euclideo \((x,y,z)\) vi è immerso come
              + \delta\,\vect{e}_3
 \]
 si fa corrispondere il \emph{punto improprio} \((\alpha:\beta:\delta:0)\).
-Le direzioni di tutte le rette dello spazio affine corrispondono
-quindi a tutti e soli i punti impropri di \(\mathbb{P}^3\).
 In generale, ogni punto di \(\mathbb{P}^3\) è una classe di equivalenza
 \[
   \homo{X} =
@@ -169,47 +162,25 @@ In generale, ogni punto di \(\mathbb{P}^3\) è una classe di equivalenza
 con punto proprio se \(U\neq 0\) (coordinate euclidee
 \((X/U,\,Y/U,\,Z/U)\)) e punto improprio se \(U=0\).
 In \(\mathbb{P}^3\) non sono definiti angoli, distanze o direzioni.
-Le trasformazioni proiettive biunivoche conservano la collinearità e
-tutte le proprietà di incidenza; l'unico invariante \emph{scalare}
-per quattro punti collineari è il \emph{birapporto}
-\[
-  (A,B;C,D)
-  \;=\;
-  \frac{(c-a)(d-b)}{(d-a)(c-b)},
-\]
-dove \(a,b,c,d\) sono le coordinate dei quattro punti su una retta
-orientata. Qualsiasi proiettività lascia tale quantità invariata;
-se uno dei punti è improprio (es.\ \(D\to\infty\)) si riduce al
-rapporto semplice \((c-a)/(c-b)\).
-
+Le trasformazioni proiettive biunivoche conservano la collinearità;
+l'unico invariante \emph{scalare} per quattro punti collineari è il
+\textbf{birapporto}: una proiettività lascia tale quantità invariata.
 L'unione di tutti i punti impropri costituisce il
-\emph{piano all'infinito}, identificato dall'equazione \(\alpha X + \beta Y + \gamma Z + \delta U = 0\).
+\emph{piano all'infinito}.
 
-\paragraph{Immersione di \(\mathbb{P}^2\) in \(\mathbb{P}^3\).}
-Un piano si identifica con \(\mathbb{P}^2\) tramite l'immersione
-\[
-  \homo{P} = \lambda\homo{A} + \mu\homo{B} + \nu\homo{C},
-  \qquad (\lambda:\mu:\nu)\in\mathbb{P}^2,
-\]
-dove \(\homo{A},\homo{B},\homo{C}\in\mathbb{P}^3\) sono tre punti non
-collineari che fungono da base. Le coordinate locali \((\lambda:\mu:\nu)\)
-sono coordinate proiettive bidimensionali; immerse in \(\mathbb{P}^3\)
-diventano coordinate globali a quattro componenti.
+\begin{oss}[Birapporto e proiezione prospettica]
+Il birapporto è l'unico invariante scalare della proiezione prospettica:
+quattro punti collineari hanno lo stesso birapporto nel mondo 3D e
+nella loro immagine sul sensore, indipendentemente dalla posa della
+camera. Questo invariante garantisce che l'omografia stimata da quattro
+corrispondenze sia unica e corretta.
+\end{oss}
 
 La struttura di \(\mathbb{P}^3\) è il contesto in cui si colloca
 la camera: il sensore è un piano immerso nello spazio proiettivo,
 e la proiezione prospettica è una mappa da \(\mathbb{P}^3\) a
 \(\mathbb{P}^2\) descritta dalla matrice \(\mat{P}\), trattata nel
 Capitolo~\ref{sec:modello_camera}.
-
-\begin{comment}
-  \begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth]{images/projective_space_example.jpg}
-    \caption{Didascalia dell'immagine.}
-    \label{fig:etichetta}
-  \end{figure}
-\end{comment}
 
 %─────────────────────────────────────────────
 \subsection{Proiettività e prospettività}
@@ -242,38 +213,10 @@ ma non necessariamente una prospettività.
 
 \begin{oss}[Affinità come caso speciale]
 Le trasformazioni affini emergono come sottogruppo delle proiettività
-quando si impone che i punti rimangano dello stesso tipo: propri in
-propri e impropri in impropri.
-Se \(\homo{x}=(\alpha:\beta:0)\) è un punto improprio, la sua
-immagine tramite \(\mat{M}\) ha terza coordinata
-\(m_{31}\alpha + m_{32}\beta\): affinché sia ancora zero per ogni
-direzione \((\alpha,\beta)\), occorre \(m_{31}=m_{32}=0\).
-Inoltre, poiché \(\det\mat{M}\neq 0\) implica \(m_{33}\neq 0\),
-si può dividere l'intera matrice per \(m_{33}\), normalizzando
-l'elemento in posizione \((3,3)\) a~\(1\). Si ottiene così la
-forma triangolare a blocchi
-\[
-  \mat{M}_{\mathrm{aff}} =
-  \begin{bmatrix}
-    m_{11} & m_{12} & m_{13} \\
-    m_{21} & m_{22} & m_{23} \\
-    0      & 0      & 1
-  \end{bmatrix},
-\]
-che agisce su un punto proprio \((\alpha:\beta:1)\) come
-\[
-  \mat{M}_{\mathrm{aff}}
-  \begin{bmatrix}\alpha\\\beta\\1\end{bmatrix}
-  =
-  \begin{bmatrix}m_{11}&m_{12}\\m_{21}&m_{22}\end{bmatrix}
-  \begin{bmatrix}\alpha\\\beta\end{bmatrix}
-  +
-  \begin{bmatrix}m_{13}\\m_{23}\end{bmatrix},
-\]
-ovvero una trasformazione lineare \(2\times 2\) invertibile più una
-traslazione. Le affinità sono dunque un caso particolare delle
-proiettività, con la struttura della matrice che emerge
-naturalmente dal vincolo di preservare i punti impropri.
+quando si impone che i punti impropri rimangano impropri, ovvero
+imponendo \(m_{31}=m_{32}=0\) nella matrice \(\mat{M}\).
+La struttura triangolare a blocchi risultante agisce sui punti propri
+come una trasformazione lineare invertibile più una traslazione.
 \end{oss}
 
 \begin{defn}[Proiettività da quattro punti]
@@ -340,7 +283,7 @@ riproiezione.
     \node[above, font=\footnotesize, blue!50!black] at (0.5, 2.8)  {\(\uparrow\infty\)};
     \node[above, font=\footnotesize, blue!50!black] at (2.0, 2.8)  {\(\uparrow\infty\)};
 
-    \node[font=\small\bfseries] at (1.25, -0.7) {Piano affine \(\mathbb{E}^2\)};
+    \node[font=\small\bfseries] at (1.25, -0.7) {Piano affine \(\mathbb{E}^2\) (pattern nel mondo)};
 
   \end{scope}
 
@@ -348,7 +291,7 @@ riproiezione.
   % FRECCIA + M
   %════════════════════════════════════════════════════════════════
   \draw[->, very thick, gray!60] (-1.3, 1.1) -- (1.3, 1.1)
-        node[midway, above, font=\small] {\(\mat{M}\)};
+        node[midway, above, font=\small] {\(\mat{M}_j\)};
 
   %════════════════════════════════════════════════════════════════
   % PANNELLO DESTRO: immagine proiettiva (quadrilatero deformato)
@@ -394,16 +337,29 @@ riproiezione.
           {\(\vect{l}_\infty\)};
 
     \node[font=\small\bfseries] at (0.3, -1.55)
-          {Piano proiettivo \(\mathbb{P}^2\)};
+          {Immagine sul sensore (frame \(j\))};
 
   \end{scope}
 
 \end{tikzpicture}
-\caption{Effetto di una proiettività \(\mat{M}\) su un quadrato:
+\caption{Effetto della proiettività \(\mat{M}_j\) su un quadrato:
          nel piano affine \(\mathbb{E}^2\) (sinistra) i lati paralleli
-         non si incontrano. In \(\mathbb{P}^2\) (destra) la proiettività
-         deforma il quadrato in un quadrilatero generico; i prolungamenti
-         dei lati convergono ai \emph{punti impropri} \(K_x\) e \(K_y\),
-         entrambi sulla retta all'infinito \(\vect{l}_\infty\).}
+         non si incontrano --- corrisponde al pattern planare nel mondo reale.
+         In \(\mathbb{P}^2\) (destra) la proiettività deforma il quadrato
+         in un quadrilatero generico, come appare nell'immagine acquisita;
+         i prolungamenti dei lati convergono ai \emph{punti di fuga}
+         \(K_x\) e \(K_y\), entrambi sulla retta all'infinito \(\vect{l}_\infty\).}
 \label{fig:proiettivita_quadrato}
 \end{figure}
+
+\begin{oss}[Ogni frame del pattern è un'istanza concreta di proiettività]
+La figura~\ref{fig:proiettivita_quadrato} non è solo un esempio astratto:
+ciascuna fotografia del pattern di calibrazione è esattamente questa
+situazione. Il pattern planare --- un insieme di keypoint disposti
+regolarmente nel piano del mondo --- viene fotografato con prospettiva
+e appare deformato nell'immagine. I lati paralleli del pattern
+convergono verso punti di fuga (proiezioni di punti impropri), e
+l'omografia \(\mat{M}_j\) stimata per ogni frame non è altro che la
+matrice \(\mat{M}\) di questa figura: la proiettività che mappa i
+punti del piano-pattern nei loro corrispondenti pixel sul sensore.
+\end{oss}
