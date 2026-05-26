@@ -226,79 +226,64 @@ risolvendo il sistema lineare omogeneo risultante.
 \subsection{Retroproiezione e pseudoinversa}
 \label{sub:retroproiezione}
 
-Dato un punto immagine \(\homo{x}\in\mathbb{P}^2\), si vuole trovare
-un punto \(\homo{\hat{X}}\in\mathbb{P}^3\) che si proietti su di esso.
-Il punto \(\homo{x}\) è noto; \(\mat{P}\) è nota; si cerca
-\(\homo{\hat{X}}\) tale che \(\mat{P}\,\homo{\hat{X}} \sim \homo{x}\).
-
-Si osserva che \(\mat{P}^T\) è una matrice \(4\times3\) di rango~3
-e ammette quindi \emph{inversa sinistra} \((\mat{P}^T)^+\), con
-\[
-  (\mat{P}^T)^+\,\mat{P}^T = \mat{I}_3.
-\]
-Prendendo la trasposta di entrambi i membri si definisce
-\(\widehat{\mat{P}} = \bigl[(\mat{P}^T)^+\bigr]^T\), che
-esplicitamente vale
-\[
-  \widehat{\mat{P}} = \mat{P}^T(\mat{P}\mat{P}^T)^{-1},
-\]
-ed è l'\emph{inversa destra} di \(\mat{P}\):
-\[
-  \mat{P}\,\widehat{\mat{P}} = \mat{I}_3.
-\]
-Il punto
-\[
-  \homo{\hat{X}} = \widehat{\mat{P}}\,\homo{x}
-\]
-si proietta esattamente su \(\homo{x}\), poiché
-\[
-  \mat{P}\,\homo{\hat{X}}
-  = \mat{P}\,\widehat{\mat{P}}\,\homo{x}
-  = \mat{I}_3\,\homo{x}
-  = \homo{x}.
-\]
-L'insieme di tutti i punti compatibili con \(\homo{x}\) forma la
-\emph{retta di retroproiezione}
+Dato un punto immagine \(\homo{x}\in\mathbb{P}^2\), la
+\emph{retta di retroproiezione} è l'insieme di tutti i punti di
+\(\mathbb{P}^3\) che si proiettano su di esso:
 \[
   \homo{\hat{X}} + \lambda\,\homo{C}, \qquad \lambda\in\mathbb{R},
 \]
-dove \(\homo{C}\) è il nucleo di \(\mat{P}\).
+dove \(\homo{C}\) è il nucleo di \(\mat{P}\) e
+\(\homo{\hat{X}} = \mat{P}^T(\mat{P}\mat{P}^T)^{-1}\homo{x}\)
+è l'\emph{inversa destra} (pseudoinversa) di \(\mat{P}\) applicata
+a \(\homo{x}\).
+Questa operazione non è direttamente usata nel pipeline di
+calibrazione del progetto, ma è fondamentale in applicazioni di
+ricostruzione 3D e stereo.
 
 %─────────────────────────────────────────────
-\subsection{Stima di \(\mat{P}\) da corrispondenze}
+\subsection{Dal pattern planare all'omografia: riduzione di \(\mat{P}\)}
 \label{sub:stima_P}
 
-Date \(n\) corrispondenze note \(\homo{X}_i \leftrightarrow \homo{x}_i\),
-si impone la relazione di proiezione per ciascuna coppia:
+Nel progetto il pattern di calibrazione è planare: tutti i punti del
+target giacciono sul piano \(Z=0\) del sistema di riferimento mondo.
+Inserendo questo vincolo nella proiezione~\eqref{eq:P_canonica}:
 \[
   \mat{P}
-  \begin{bmatrix} X_i \\ Y_i \\ Z_i \\ U_i \end{bmatrix}
-  = \varrho_i
-  \begin{bmatrix} x_i \\ y_i \\ u_i \end{bmatrix}.
+  \begin{bmatrix} X \\ Y \\ 0 \\ 1 \end{bmatrix}
+  =
+  \begin{bmatrix} \vect{p}_1 & \vect{p}_2 & \vect{p}_3 & \vect{p}_4 \end{bmatrix}
+  \begin{bmatrix} X \\ Y \\ 0 \\ 1 \end{bmatrix}
+  =
+  \underbrace{\begin{bmatrix} \vect{p}_1 & \vect{p}_2 & \vect{p}_4 \end{bmatrix}}_{\mat{M}_j}
+  \begin{bmatrix} X \\ Y \\ 1 \end{bmatrix},
 \]
-Denotando con \(\vect{m}_1, \vect{m}_2, \vect{m}_3\) le righe
-di \(\mat{P}\), il sistema diventa
+dove \(\vect{p}_3\) (la terza colonna di \(\mat{P}\), che moltiplica
+\(Z=0\)) scompare. Il problema si riduce quindi alla stima di
+una matrice \(3\times3\) di rango~3
 \[
-  \begin{cases}
-    \vect{m}_1 \homo{X}_i = \varrho_i\, x_i \\[4pt]
-    \vect{m}_2 \homo{X}_i = \varrho_i\, y_i \\[4pt]
-    \vect{m}_3 \homo{X}_i = \varrho_i\, u_i
-  \end{cases}
+  \varrho\,\homo{x} = \mat{M}_j\,\homo{X}_{2D},
+  \qquad
+  \homo{X}_{2D} = \begin{bmatrix} X \\ Y \\ 1 \end{bmatrix},
 \]
-Eliminando \(\varrho_i\) dividendo le prime due equazioni per la
-terza si ottengono \textbf{due relazioni lineari} nei coefficienti
-\(m_{ij}\) per ogni punto.
-Con \(n=6\) punti si ottengono 12 equazioni in 12 incognite
-(gli elementi di \(\mat{P}\)), riducibili a 11 imponendo \(m_{11}=1\)
-per fissare la scala. Una stima robusta si ottiene per DLT/SVD,
-risolvendo il sistema sovradeterminato in senso dei minimi quadrati.
-I punti devono essere in \emph{posizione generale}: nessun gruppo di
-quattro coplanare e nessun gruppo di tre collineare.
+che è esattamente la proiettività \(\mat{M}\) di
+\S\,\ref{sub:proiettivita}: mappa punti del piano-pattern
+(sistema di riferimento mondo, \(Z=0\)) nei corrispondenti pixel
+sul sensore. La riduzione a \(3\times3\) rende il problema
+numericamente più stabile e richiede soli 4 punti per vista
+anziché 6 (come richiesto nel caso generale per una \(\mat{P}\)
+\(3\times4\) a 11 DOF).
 
-\begin{oss}
-Nel progetto i punti dello spazio hanno sempre \(Z=0\) (il pattern è
-planare), per cui la terza colonna di \(\mat{P}\) è ridondante e il
-problema si riduce alla stima di omografie \(\mat{M}_j\) (\(3\times3\)).
-Questo è numericamente più stabile e richiede soli 4 punti per vista
-anziché 6.
+\begin{oss}[Stima generale di \(\mat{P}\) da corrispondenze]
+Nel caso in cui il pattern non sia planare (\(Z \neq 0\)), la
+terza colonna di \(\mat{P}\) non può essere eliminata. Date \(n\)
+corrispondenze \(\homo{X}_i \leftrightarrow \homo{x}_i\), si
+costituisce un sistema lineare omogeneo tramite DLT
+(Direct Linear Transform): eliminando il fattore di scala
+\(\varrho_i\) da ciascuna coppia si ottengono 2 equazioni
+lineari negli 11 elementi di \(\mat{P}\). Con \(n \geq 6\) punti
+in posizione generale (nessun gruppo di quattro coplanare,
+nessun gruppo di tre collineare) il sistema è determinato e
+si risolve per SVD. \`E questa la struttura che il professore
+mostra a lezione: il caso del pattern planare con \(Z=0\)
+è il suo caso particolare più comune in calibrazione.
 \end{oss}
