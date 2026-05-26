@@ -209,36 +209,17 @@ dell'asse focale; congiungendo tale direzione con il centro ottico
 \(C\) si ottiene l'intero asse focale, la cui intersezione con il
 piano immagine è il \emph{punto principale} \(H'\).
 
-%─────────────────────────────────────────────
-\subsection{Centro ottico e nucleo di \(\mat{P}\)}
-\label{sub:centro_ottico}
-
-Il centro ottico \(\vect{c}\) è l'unico punto dello spazio
-proiettivo proprio tale che
-\[
-  \mat{P}\,\homo{C} = \vect{0}.
-\]
-È il nucleo di \(\mat{P}\): si trova intersecando le tre famiglie
-di piani definite dalle righe di \(\mat{P}\) in forma cartesiana e
-risolvendo il sistema lineare omogeneo risultante.
-
-%─────────────────────────────────────────────
-\subsection{Retroproiezione e pseudoinversa}
-\label{sub:retroproiezione}
-
-Dato un punto immagine \(\homo{x}\in\mathbb{P}^2\), la
-\emph{retta di retroproiezione} è l'insieme di tutti i punti di
-\(\mathbb{P}^3\) che si proiettano su di esso:
-\[
-  \homo{\hat{X}} + \lambda\,\homo{C}, \qquad \lambda\in\mathbb{R},
-\]
-dove \(\homo{C}\) è il nucleo di \(\mat{P}\) e
-\(\homo{\hat{X}} = \mat{P}^T(\mat{P}\mat{P}^T)^{-1}\homo{x}\)
-è l'\emph{inversa destra} (pseudoinversa) di \(\mat{P}\) applicata
-a \(\homo{x}\).
-Questa operazione non è direttamente usata nel pipeline di
-calibrazione del progetto, ma è fondamentale in applicazioni di
-ricostruzione 3D e stereo.
+\begin{oss}[Centro ottico, nucleo e retroproiezione]
+Il centro ottico \(\vect{c}\) è il punto che \(\mat{P}\) manda nel
+vettore nullo (\(\mat{P}\,\homo{C} = \vect{0}\)): fisicamente, è il punto da cui partono
+tutti i raggi di proiezione. Dato un punto immagine
+\(\homo{x}\in\mathbb{P}^2\), l'insieme di tutti i punti 3D che si
+proiettano su di esso forma la \emph{retta di retroproiezione}
+passante per \(\homo{C}\), calcolabile tramite l'inversa destra
+\(\mat{P}^T(\mat{P}\mat{P}^T)^{-1}\). Questi concetti non sono
+direttamente usati nel pipeline di calibrazione del progetto, ma
+sono fondamentali in applicazioni di ricostruzione 3D e stereo.
+\end{oss}
 
 %─────────────────────────────────────────────
 \subsection{Dal pattern planare all'omografia: riduzione di \(\mat{P}\)}
@@ -274,8 +255,7 @@ anziché 6 (come richiesto nel caso generale per una \(\mat{P}\)
 \(3\times4\) a 11 DOF).
 
 \begin{oss}[Stima generale di \(\mat{P}\) da corrispondenze]
-Nel caso in cui il pattern non sia planare (\(Z \neq 0\)), la
-terza colonna di \(\mat{P}\) non può essere eliminata. Date \(n\)
+Nel caso in cui il pattern non sia planare (\(Z \neq 0\)), date \(n\)
 corrispondenze \(\homo{X}_i \leftrightarrow \homo{x}_i\), si
 costituisce un sistema lineare omogeneo tramite DLT
 (Direct Linear Transform): eliminando il fattore di scala
@@ -283,7 +263,5 @@ costituisce un sistema lineare omogeneo tramite DLT
 lineari negli 11 elementi di \(\mat{P}\). Con \(n \geq 6\) punti
 in posizione generale (nessun gruppo di quattro coplanare,
 nessun gruppo di tre collineare) il sistema è determinato e
-si risolve per SVD. \`E questa la struttura che il professore
-mostra a lezione: il caso del pattern planare con \(Z=0\)
-è il suo caso particolare più comune in calibrazione.
+si risolve per SVD. \
 \end{oss}

@@ -179,10 +179,8 @@ si riduce al rapporto semplice tra le distanze degli altri tre.
 Il birapporto è l'unico invariante scalare della proiezione prospettica:
 quattro punti collineari hanno lo stesso birapporto nel mondo 3D e
 nella loro immagine sul sensore. Questo garantisce coerenza geometrica
-indipendentemente dalla posa della camera. Il modulo
-\texttt{cv2.ccalib.CustomPattern} di OpenCV non sfrutta esplicitamente
-il birapporto, in quanto lavora tramite matching di descrittori locali;
-questo invariante è tuttavia alla base della teoria che garantisce che
+indipendentemente dalla posa della camera;
+questo invariante è alla base della teoria che garantisce che
 l'omografia stimata da quattro corrispondenze sia unica e corretta.
 \end{oss}
 
@@ -277,18 +275,6 @@ acquisita corrisponde una \(\mat{M}_i\) che correla i punti
 sul sensore. L'algoritmo genetico seleziona poi il sottoinsieme di
 frame --- e i flag di calibrazione --- che minimizzano l'errore di
 riproiezione.
-
-\begin{oss}[Ogni frame del pattern è un'istanza concreta di proiettività]
-La figura~\ref{fig:proiettivita_quadrato} non è solo un esempio astratto:
-ciascuna fotografia del pattern di calibrazione è esattamente questa
-situazione. Il pattern planare --- un insieme di keypoint disposti
-regolarmente nel piano del mondo --- viene fotografato con prospettiva
-e appare deformato nell'immagine. I lati paralleli del pattern
-convergono verso punti di fuga (proiezioni di punti impropri), e
-l'omografia \(\mat{M}_j\) stimata per ogni frame non è altro che la
-matrice \(\mat{M}\) di questa figura: la proiettività che mappa i
-punti del piano-pattern nei loro corrispondenti pixel sul sensore.
-\end{oss}
 
 \begin{figure}[H]
 \centering
@@ -396,3 +382,15 @@ punti del piano-pattern nei loro corrispondenti pixel sul sensore.
          \(K_x\) e \(K_y\), entrambi sulla retta all'infinito \(\vect{l}_\infty\).}
 \label{fig:proiettivita_quadrato}
 \end{figure}
+
+\begin{oss}[Ogni frame del pattern è un'istanza concreta di proiettività]
+La figura~\ref{fig:proiettivita_quadrato} non è solo un esempio astratto:
+ciascuna fotografia del pattern di calibrazione è esattamente questa
+situazione. Il pattern planare --- un insieme di keypoint disposti
+regolarmente nel piano del mondo --- viene fotografato con prospettiva
+e appare deformato nell'immagine. I lati paralleli del pattern
+convergono verso punti di fuga (proiezioni di punti impropri), e
+l'omografia \(\mat{M}_j\) stimata per ogni frame non è altro che la
+matrice \(\mat{M}\) di questa figura: la proiettività che mappa i
+punti del piano-pattern nei loro corrispondenti pixel sul sensore.
+\end{oss}
