@@ -8,3 +8,11 @@
 *.out
 *.synctex.gz
 *.toc
+dist/CameraCalibTool/CameraCalibTool
+dist/CameraCalibTool-linux-x64.zip
+build/CameraCalibTool/xref-CameraCalibTool.html
+build/CameraCalibTool/warn-CameraCalibTool.txt
+build/CameraCalibTool/PYZ-00.pyz
+build/CameraCalibTool/CameraCalibTool
+build/CameraCalibTool/base_library.zip
+build/CameraCalibTool/CameraCalibTool.pkg
