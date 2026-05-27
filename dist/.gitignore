@@ -1,1 +1,5 @@
 in/offline_example/
+_internal/
+dist/
+build/
+*.spec
